@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Votación - Liceo N° 42 "José Pedro Cardoso"</title>
+    
+    <!-- Fuentes Google (Inter & Outfit) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Librería XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <!-- Librería Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --card-bg-solid: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.35);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --shadow-md: 0 12px 28px -4px rgba(0, 0, 0, 0.45);
+            
+            --color-verde: #10b981;
+            --color-rojo: #ef4444;
+            --color-amarillo: #f59e0b;
+            --color-violeta: #a855f7;
+        }
+
+        body.theme-light-executive {
+            --bg-body: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg-solid: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent-primary: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.25);
+            --border-color: #cbd5e1;
+            --shadow-md: 0 10px 25px -3px rgba(15, 23, 42, 0.08);
+        }
+
+        body.theme-mint-corp {
+            --bg-body: #0f231f;
+            --card-bg: rgba(20, 45, 40, 0.75);
+            --card-bg-solid: #15332e;
+            --text-primary: #e6f4f1;
+            --text-secondary: #82b3a8;
+            --accent-primary: #2dd4bf;
+            --accent-glow: rgba(45, 212, 191, 0.25);
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body.theme-dark-cyber {
+            --bg-body: #090d16;
+            --card-bg: rgba(17, 24, 39, 0.8);
+            --card-bg-solid: #111827;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-primary: #f43f5e;
+            --accent-glow: rgba(244, 63, 94, 0.35);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, var(--accent-glow) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        header {
+            width: 100%;
+            max-width: 1280px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 28px 36px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .title-container h1 {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .title-container h1 i {
+            -webkit-text-fill-color: initial;
+            color: var(--accent-primary);
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            margin: 6px 0 0 0;
+            font-size: 0.98rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-view {
+            background-color: var(--accent-glow);
+            color: var(--accent-primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid var(--accent-primary);
+        }
+
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        select, button, input {
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            background-color: var(--card-bg-solid);
+            color: var(--text-primary);
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            filter: brightness(1.1);
+        }
+
+        button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-connect { background-color: var(--accent-primary); color: #ffffff; }
+        .btn-sim { background-color: #3b82f6; color: #ffffff; }
+        .btn-excel { background-color: #10b981; color: #ffffff; }
+        .btn-email { background-color: #8b5cf6; color: #ffffff; }
+        .btn-reset { background-color: #ef4444; color: #ffffff; }
+        .btn-mode { 
+            background: linear-gradient(135deg, var(--accent-primary), #6366f1); 
+            color: #ffffff; 
+            padding: 12px 22px; 
+            font-size: 0.95rem;
+            border-radius: 14px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            background-color: var(--card-bg-solid);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge.connected {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: #10b981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .class-info-card {
+            width: 100%;
+            max-width: 1280px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 24px 32px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .class-info-card h2 {
+            margin: 0 0 20px 0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .class-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+        }
+
+        .input-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-field-group label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-field-group input, .input-field-group select {
+            width: 100%;
+        }
+
+        .summary-bar {
+            width: 100%;
+            max-width: 1280px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 20px 22px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+        }
+
+        .stat-card.v-verde::before { background-color: var(--color-verde); box-shadow: 0 0 12px var(--color-verde); }
+        .stat-card.v-rojo::before { background-color: var(--color-rojo); box-shadow: 0 0 12px var(--color-rojo); }
+        .stat-card.v-amarillo::before { background-color: var(--color-amarillo); box-shadow: 0 0 12px var(--color-amarillo); }
+        .stat-card.v-violeta::before { background-color: var(--color-violeta); box-shadow: 0 0 12px var(--color-violeta); }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-top: 6px;
+            color: var(--text-primary);
+        }
+
+        .main-container { width: 100%; max-width: 1280px; }
+        
+        .view-panel {
+            display: none;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .view-panel.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .classroom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 18px;
+        }
+
+        .desk {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+
+        .desk:hover {
+            transform: translateY(-4px) scale(1.03);
+            border-color: var(--accent-primary);
+        }
+
+        .desk-student {
+            font-size: 0.92rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+
+        .desk-id {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .desk-light {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--bg-body);
+            border: 2px solid var(--border-color);
+            margin: 0 auto;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .desk-light.active-light {
+            transform: scale(1.2);
+            animation: bounceGlow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .color-1 { 
+            background-color: var(--color-verde) !important; 
+            border-color: #34d399 !important; 
+            box-shadow: 0 0 18px var(--color-verde); 
+        }
+        .color-2 { 
+            background-color: var(--color-rojo) !important; 
+            border-color: #f87171 !important; 
+            box-shadow: 0 0 18px var(--color-rojo); 
+        }
+        .color-3 { 
+            background-color: var(--color-amarillo) !important; 
+            border-color: #fbbf24 !important; 
+            box-shadow: 0 0 18px var(--color-amarillo); 
+        }
+        .color-4 { 
+            background-color: var(--color-violeta) !important; 
+            border-color: #c084fc !important; 
+            box-shadow: 0 0 18px var(--color-violeta); 
+        }
+
+        .chart-box {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            padding: 36px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .chart-header h3 {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .student-view-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--card-bg-solid);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 540px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-card h3 {
+            margin: 0 0 8px 0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-card p {
+            margin: 0 0 24px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .email-checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-body);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover { border-color: var(--accent-primary); transform: translateX(3px); }
+        .checkbox-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        .checkbox-label { display: flex; flex-direction: column; }
+        .checkbox-label .name { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+        .checkbox-label .mail { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes bounceGlow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); }
+            100% { transform: scale(1.2); }
+        }
+
+        body.student-mode .teacher-only { display: none !important; }
+        body.student-mode .student-view-container { display: block !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div class="title-container">
+                <h1><i class="fa-solid fa-lightbulb"></i> Mis Luces Hablan</h1>
+                <p class="subtitle">
+                    Liceo N° 42 "José Pedro Cardoso" 
+                    <span id="view-badge" class="badge-view"><i class="fa-solid fa-chalkboard-user"></i> Panel Docente</span>
+                </p>
+            </div>
+            <div class="controls-group">
+                <span id="connection-status" class="status-badge teacher-only">
+                    <i class="fa-solid fa-circle-xmark"></i> Desconectado
+                </span>
+                <button id="btn-toggle-mode" class="btn-mode">
+                    <i class="fa-solid fa-graduation-cap"></i> Vista Estudiante
+                </button>
+            </div>
+        </div>
+
+        <div class="controls-bar teacher-only">
+            <div class="controls-group">
+                <button id="btn-serial" class="btn-connect"><i class="fa-solid fa-plug"></i> Conectar Receptor USB</button>
+                <button id="btn-sim-group" class="btn-sim"><i class="fa-solid fa-wand-magic-sparkles"></i> Simular Clase</button>
+                <button id="btn-reset" class="btn-reset"><i class="fa-solid fa-rotate-right"></i> Reiniciar</button>
+                <button id="btn-excel" class="btn-excel"><i class="fa-solid fa-file-excel"></i> Descargar Excel</button>
+                <button id="btn-email-modal" class="btn-email"><i class="fa-solid fa-paper-plane"></i> Enviar Correo</button>
+            </div>
+
+            <div class="controls-group">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <label for="select-total-students" style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);"><i class="fa-solid fa-users"></i> Alumnos:</label>
+                    <select id="select-total-students" style="width: 80px;">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="30" selected>30</option>
+                    </select>
+                </div>
+
+                <select id="teacher-view-select">
+                    <option value="map">🗺️ Mapa de Aula</option>
+                    <option value="chart">📊 Gráficas de Clase</option>
+                </select>
+
+                <select id="theme-select">
+                    <option value="default">🌙 Noche Ejecutiva</option>
+                    <option value="light-executive">☀️ Marmor Claro</option>
+                    <option value="mint-corp">🌲 Menta Corporativo</option>
+                    <option value="dark-cyber">🚀 Cyberpunk Rosa</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <div class="class-info-card teacher-only">
+        <h2><i class="fa-solid fa-folder-open"></i> Datos de la Sesión Pedagógica</h2>
+        <div class="class-info-grid">
+            <div class="input-field-group">
+                <label for="input-docente"><i class="fa-solid fa-user-tie"></i> Docente A Cargo</label>
+                <input type="text" id="input-docente" placeholder="Ej: Prof. María García" />
+            </div>
+
+            <div class="input-field-group">
+                <label for="input-email-docente"><i class="fa-solid fa-envelope"></i> Correo Docente</label>
+                <input type="email" id="input-email-docente" placeholder="profesor@liceo42.edu.uy" />
+            </div>
+
+            <div class="input-field-group">
+                <label for="input-email-inst"><i class="fa-solid fa-building-columns"></i> Correo Institución</label>
+                <input type="email" id="input-email-inst" value="direccion@liceo42.edu.uy" />
+            </div>
+
+            <div class="input-field-group">
+                <label for="select-grupo"><i class="fa-solid fa-users-rectangle"></i> Grupo / Nivel</label>
+                <select id="select-grupo">
+                    <option value="">-- Seleccionar Grupo --</option>
+                    <option value="7mo 1">7mo 1</option>
+                    <option value="7mo 2">7mo 2</option>
+                    <option value="7mo 3">7mo 3</option>
+                    <option value="8vo 1">8vo 1</option>
+                    <option value="8vo 2">8vo 2</option>
+                    <option value="8vo 3">8vo 3</option>
+                    <option value="9no 1">9no 1</option>
+                    <option value="9no 2">9no 2</option>
+                    <option value="9no 3">9no 3</option>
+                    <option value="1 EMS 1">1 EMS 1</option>
+                    <option value="1 EMS 2">1 EMS 2</option>
+                </select>
+            </div>
+
+            <div class="input-field-group">
+                <label for="select-materia"><i class="fa-solid fa-book"></i> Asignatura</label>
+                <select id="select-materia" disabled>
+                    <option value="">-- Seleccione Primero un Grupo --</option>
+                </select>
+            </div>
+
+            <div class="input-field-group" style="grid-column: span 2;">
+                <label for="input-tema"><i class="fa-solid fa-pen-nib"></i> Tema Tratado</label>
+                <input type="text" id="input-tema" placeholder="Ej: Leyes de Newton y Principios de la Dinámica" />
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-bar">
+        <div class="stat-card v-verde">
+            <div class="stat-label"><i class="fa-solid fa-circle-check" style="color: var(--color-verde);"></i> Comprendido</div>
+            <div id="count-verde" class="stat-value">0</div>
+        </div>
+        <div class="stat-card v-rojo">
+            <div class="stat-label"><i class="fa-solid fa-circle-exclamation" style="color: var(--color-rojo);"></i> Duda Crítica</div>
+            <div id="count-rojo" class="stat-value">0</div>
+        </div>
+        <div class="stat-card v-amarillo">
+            <div class="stat-label"><i class="fa-solid fa-spinner" style="color: var(--color-amarillo);"></i> En Proceso</div>
+            <div id="count-amarillo" class="stat-value">0</div>
+        </div>
+        <div class="stat-card v-violeta teacher-only">
+            <div class="stat-label"><i class="fa-solid fa-lock" style="color: var(--color-violeta);"></i> Consulta Privada</div>
+            <div id="count-violeta" class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label"><i class="fa-solid fa-chart-pie"></i> Votos / Total</div>
+            <div id="count-total" class="stat-value">0 / 30</div>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <div class="teacher-only">
+            <div id="teacher-panel-map" class="view-panel active">
+                <div class="classroom-grid" id="classroom-map"></div>
+            </div>
+
+            <div id="teacher-panel-chart" class="view-panel">
+                <div class="chart-box">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-chart-column"></i> Distribución General del Conocimiento</h3>
+                        <select id="teacher-chart-type">
+                            <option value="doughnut">🍩 Gráfico de Dona</option>
+                            <option value="bar">📊 Gráfico de Barras</option>
+                            <option value="polarArea">🎯 Gráfico Radial / Polar</option>
+                        </select>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="teacherChartCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="student-view-container chart-box" id="student-view">
+            <div class="chart-header" style="justify-content: center;">
+                <h3><i class="fa-solid fa-users-viewfinder"></i> Resultados Colectivos de la Clase</h3>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="studentChartCanvas"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="email-modal">
+        <div class="modal-card">
+            <h3><i class="fa-solid fa-envelope-circle-check" style="color: var(--accent-primary);"></i> Confirmar Envío</h3>
+            <p>Selecciona las casillas a las cuales enviar el informe pedagógico estructurado:</p>
+            
+            <div class="email-checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="chk-docente" checked>
+                    <div class="checkbox-label">
+                        <span class="name">Docente A Cargo</span>
+                        <span class="mail" id="modal-mail-docente">profesor@liceo42.edu.uy</span>
+                    </div>
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox" id="chk-inst" checked>
+                    <div class="checkbox-label">
+                        <span class="name">Dirección / Institución</span>
+                        <span class="mail" id="modal-mail-inst">direccion@liceo42.edu.uy</span>
+                    </div>
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox" id="chk-adscripcion">
+                    <div class="checkbox-label">
+                        <span class="name">Adscripción / Secretaría</span>
+                        <span class="mail">adscripcion@liceo42.edu.uy</span>
+                    </div>
+                </label>
+
+                <div class="input-field-group" style="margin-top: 8px;">
+                    <label for="input-custom-mail"><i class="fa-solid fa-plus"></i> Correo Adicional</label>
+                    <input type="email" id="input-custom-mail" placeholder="ejemplo@correo.com">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="btn-cancel-modal" style="background-color: transparent; color: var(--text-primary); border: 1px solid var(--border-color);">Cancelar</button>
+                <button type="button" id="btn-send-emails" class="btn-email"><i class="fa-solid fa-paper-plane"></i> Enviar Ahora</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const curriculumSubjects = {
+            "7mo": ["Biología", "Comunicación Visual", "Educación Física y Recreación", "Educación Musical", "Geografía", "Historia", "Idioma Español", "Inglés", "Matemática", "Ciencias de la Computación", "Ciencias Físico-Químicas"],
+            "8vo": ["Biología", "Comunicación Visual", "Educación Física y Recreación", "Educación Musical", "Educación Ciudadana", "Geografía", "Historia", "Idioma Español", "Inglés", "Matemática", "Ciencias de la Computación", "Ciencias Físico-Químicas"],
+            "9no": ["Biología", "Comunicación Visual", "Educación Física y Recreación", "Educación Musical", "Educación Ciudadana", "Geografía", "Historia", "Idioma Español", "Inglés", "Matemática", "Ciencias de la Computación", "Química", "Física", "Literatura"],
+            "1 EMS": ["Astronomía", "Filosofía", "Biología", "Comunicación Visual y Plástica", "Educación Física", "Educación Musical", "Participación Juvenil", "Historia", "Inglés", "Matemática", "Química", "Física", "Literatura", "Deporte y Recreación", "Patrimonio", "Argumentación y Debate"]
+        };
+
+        const studentList = [
+            "Lucas M.", "Sofía R.", "Mateo G.", "Valentina L.", "Joaquín C.",
+            "Camila B.", "Agustín P.", "Isabella D.", "Nicolás F.", "Martina S.",
+            "Thiago A.", "Lucía V.", "Benjamin H.", "Emma T.", "Felipe O.",
+            "Juliet N.", "Gabriel K.", "Mía E.", "Emanuel I.", "Victoria Q.",
+            "Santiago W.", "Elena J.", "Bruno Y.", "Clara U.", "Ignacio X.",
+            "Zoe L.", "Dante M.", "Renata P.", "Lautaro S.", "Paulina R."
+        ];
+
+        const colorMap = { 1: "🟢 Comprendido", 2: "🔴 Duda Crítica", 3: "🟡 En Proceso", 4: "🟣 Consulta Privada" };
+        
+        let totalDesks = parseInt(document.getElementById('select-total-students').value);
+        let votes = JSON.parse(localStorage.getItem('mlh_votes_v13')) || {};
+        let historyLog = JSON.parse(localStorage.getItem('mlh_history_v13')) || [];
+
+        let teacherChartInstance = null;
+        let studentChartInstance = null;
+        let port, reader;
+
+        document.getElementById('select-total-students').addEventListener('change', (e) => {
+            totalDesks = parseInt(e.target.value);
+            renderClassroom();
+        });
+
+        document.getElementById('select-grupo').addEventListener('change', (e) => {
+            const selectedGroup = e.target.value;
+            const materiaSelect = document.getElementById('select-materia');
+            materiaSelect.innerHTML = '';
+
+            if (!selectedGroup) {
+                materiaSelect.disabled = true;
+                materiaSelect.innerHTML = '<option value="">-- Seleccione Primero un Grupo --</option>';
+                return;
+            }
+
+            let levelKey = "";
+            if (selectedGroup.startsWith("7mo")) levelKey = "7mo";
+            else if (selectedGroup.startsWith("8vo")) levelKey = "8vo";
+            else if (selectedGroup.startsWith("9no")) levelKey = "9no";
+            else if (selectedGroup.startsWith("1 EMS")) levelKey = "1 EMS";
+
+            const subjects = curriculumSubjects[levelKey] || [];
+            materiaSelect.disabled = false;
+            materiaSelect.innerHTML = '<option value="">-- Seleccionar Materia --</option>';
+
+            subjects.forEach(subject => {
+                const opt = document.createElement('option');
+                opt.value = subject;
+                opt.textContent = subject;
+                materiaSelect.appendChild(opt);
+            });
+        });
+
+        function getComputedTextColor() {
+            return getComputedStyle(document.body).getPropertyValue('--text-primary').trim() || '#f8fafc';
+        }
+
+        // CONEXIÓN USB PUERTO SERIE (WEB SERIAL API)
+        document.getElementById('btn-serial').addEventListener('click', async () => {
+            if (!("serial" in navigator)) {
+                alert("Tu navegador no soporta la API Web Serial. Usa Google Chrome o Microsoft Edge.");
+                return;
+            }
+            try {
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 115200 });
+
+                const statusBadge = document.getElementById('connection-status');
+                statusBadge.innerHTML = '<i class="fa-solid fa-wifi"></i> Conectado';
+                statusBadge.classList.add("connected");
+
+                readSerialData();
+            } catch (err) {
+                console.error("Error al conectar:", err);
+            }
+        });
+
+        async function readSerialData() {
+            const textDecoder = new TextDecoderStream();
+            port.readable.pipeTo(textDecoder.writable);
+            reader = textDecoder.readable.getReader();
+            let buffer = "";
+
+            try {
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    buffer += value;
+                    let lines = buffer.split("\n");
+                    buffer = lines.pop();
+
+                    for (let line of lines) {
+                        processMessage(line.trim());
+                    }
+                }
+            } catch (error) {
+                console.error("Error en serie:", error);
+            } finally {
+                reader.releaseLock();
+            }
+        }
+
+        function processMessage(msg) {
+            if (!msg || !msg.includes(":")) return;
+            const parts = msg.split(":");
+            const id = parts[0].toUpperCase().trim(); 
+            const code = parseInt(parts[1].trim());
+
+            if (isNaN(code) || code < 1 || code > 4) return;
+
+            const deskNum = parseInt(id.replace("M", ""));
+            if (deskNum > totalDesks) return; 
+
+            const studentName = studentList[deskNum - 1] || "Estudiante";
+            const time = new Date().toLocaleTimeString();
+
+            votes[id] = { code, studentName, time };
+            historyLog.push({ id, studentName, code, time });
+
+            localStorage.setItem('mlh_votes_v13', JSON.stringify(votes));
+            localStorage.setItem('mlh_history_v13', JSON.stringify(historyLog));
+
+            renderClassroom();
+        }
+
+        document.getElementById('theme-select').addEventListener('change', (e) => {
+            document.body.className = e.target.value === 'default' ? '' : `theme-${e.target.value}`;
+            initTeacherChart();
+            initStudentChart();
+            updateCharts();
+        });
+
+        document.getElementById('teacher-view-select').addEventListener('change', (e) => {
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            const targetPanel = document.getElementById(`teacher-panel-${e.target.value}`);
+            targetPanel.classList.add('active');
+            
+            if (e.target.value === 'chart') {
+                setTimeout(() => {
+                    initTeacherChart();
+                    updateCharts();
+                }, 100);
+            }
+        });
+
+        document.getElementById('teacher-chart-type').addEventListener('change', () => {
+            initTeacherChart();
+            updateCharts();
+        });
+
+        function renderClassroom() {
+            const classroomMap = document.getElementById('classroom-map');
+            classroomMap.innerHTML = '';
+
+            for (let i = 1; i <= totalDesks; i++) {
+                const id = `M${i}`;
+                const studentName = studentList[i - 1];
+                const hasVoted = votes[id];
+
+                const desk = document.createElement('div');
+                desk.className = 'desk';
+                desk.style.animationDelay = `${i * 0.03}s`;
+                desk.innerHTML = `
+                    <div class="desk-student">${studentName}</div>
+                    <div class="desk-id">Asiento ${i < 10 ? '0' + i : i} (${id})</div>
+                    <div class="desk-light ${hasVoted ? 'color-' + hasVoted.code + ' active-light' : ''}"></div>
+                `;
+                classroomMap.appendChild(desk);
+            }
+            recalculateTotals();
+        }
+
+        function recalculateTotals() {
+            let v = 0, r = 0, a = 0, vi = 0;
+            let activeVotesCount = 0;
+
+            Object.keys(votes).forEach(id => {
+                const deskNum = parseInt(id.replace("M", ""));
+                if (deskNum <= totalDesks) {
+                    activeVotesCount++;
+                    const code = votes[id].code;
+                    if (code === 1) v++;
+                    if (code === 2) r++;
+                    if (code === 3) a++;
+                    if (code === 4) vi++;
+                }
+            });
+
+            document.getElementById('count-verde').textContent = v;
+            document.getElementById('count-rojo').textContent = r;
+            document.getElementById('count-amarillo').textContent = a;
+            document.getElementById('count-violeta').textContent = vi;
+            document.getElementById('count-total').textContent = `${activeVotesCount} / ${totalDesks}`;
+
+            updateCharts();
+        }
+
+        function initTeacherChart() {
+            const ctx = document.getElementById('teacherChartCanvas').getContext('2d');
+            const type = document.getElementById('teacher-chart-type').value;
+            const textColor = getComputedTextColor();
+
+            if (teacherChartInstance) teacherChartInstance.destroy();
+
+            const isBar = type === 'bar';
+
+            teacherChartInstance = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: ['Comprendido', 'Duda Crítica', 'En Proceso', 'Consulta Privada'],
+                    datasets: [{
+                        label: 'Votos',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b', '#a855f7'],
+                        borderWidth: 0,
+                        borderRadius: isBar ? 10 : 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 1000, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: {
+                            display: !isBar,
+                            position: 'bottom',
+                            labels: {
+                                color: textColor,
+                                font: { family: 'Inter', size: 13, weight: '600' },
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    },
+                    scales: isBar ? {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: textColor, precision: 0 },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: textColor, font: { weight: '600' } },
+                            grid: { display: false }
+                        }
+                    } : {}
+                }
+            });
+        }
+
+        function initStudentChart() {
+            const ctx = document.getElementById('studentChartCanvas').getContext('2d');
+            const textColor = getComputedTextColor();
+
+            if (studentChartInstance) studentChartInstance.destroy();
+
+            studentChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Comprendido', 'Duda Crítica', 'En Proceso'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 1200, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor,
+                                font: { family: 'Inter', size: 14, weight: '700' },
+                                padding: 22,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            let v = 0, r = 0, a = 0, vi = 0;
+            Object.keys(votes).forEach(id => {
+                const deskNum = parseInt(id.replace("M", ""));
+                if (deskNum <= totalDesks) {
+                    const code = votes[id].code;
+                    if (code === 1) v++;
+                    if (code === 2) r++;
+                    if (code === 3) a++;
+                    if (code === 4) vi++;
+                }
+            });
+
+            if (teacherChartInstance) {
+                teacherChartInstance.data.datasets[0].data = [v, r, a, vi];
+                teacherChartInstance.update();
+            }
+
+            if (studentChartInstance) {
+                studentChartInstance.data.datasets[0].data = [v, r, a];
+                studentChartInstance.update();
+            }
+        }
+
+        document.getElementById('btn-toggle-mode').addEventListener('click', () => {
+            document.body.classList.toggle('student-mode');
+            const isStudent = document.body.classList.contains('student-mode');
+            const btn = document.getElementById('btn-toggle-mode');
+            const badge = document.getElementById('view-badge');
+
+            if (isStudent) {
+                btn.innerHTML = '<i class="fa-solid fa-chalkboard-user"></i> Panel Docente';
+                badge.innerHTML = '<i class="fa-solid fa-graduation-cap"></i> Pantalla Estudiante';
+                setTimeout(() => {
+                    initStudentChart();
+                    updateCharts();
+                }, 100);
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-graduation-cap"></i> Vista Estudiante';
+                badge.innerHTML = '<i class="fa-solid fa-chalkboard-user"></i> Panel Docente';
+            }
+        });
+
+        document.getElementById('btn-sim-group').addEventListener('click', () => {
+            for (let i = 1; i <= totalDesks; i++) {
+                const randomCode = Math.floor(Math.random() * 4) + 1;
+                const id = `M${i}`;
+                const time = new Date().toLocaleTimeString();
+                votes[id] = { code: randomCode, studentName: studentList[i - 1], time };
+                historyLog.push({ id, studentName: studentList[i - 1], code: randomCode, time });
+            }
+            localStorage.setItem('mlh_votes_v13', JSON.stringify(votes));
+            localStorage.setItem('mlh_history_v13', JSON.stringify(historyLog));
+            renderClassroom();
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            if (confirm('¿Desea borrar la votación activa?')) {
+                votes = {};
+                localStorage.removeItem('mlh_votes_v13');
+                renderClassroom();
+            }
+        });
+
+        document.getElementById('btn-excel').addEventListener('click', () => {
+            if (historyLog.length === 0) { 
+                alert('No hay historial de votación para exportar.'); 
+                return; 
+            }
+
+            const docente = document.getElementById('input-docente').value.trim() || "No especificado";
+            const grupo = document.getElementById('select-grupo').value || "No especificado";
+            const materia = document.getElementById('select-materia').value || "No especificada";
+            const tema = document.getElementById('input-tema').value.trim() || "Sin tema registrado";
+
+            const wsData = [
+                ["LICEO N° 42 \"JOSÉ PEDRO CARDOSO\""],
+                ["Informe Digital de Clase - Mis Luces Hablan"],
+                [""],
+                ["Docente:", docente, "", "Fecha:", new Date().toLocaleDateString('es-UY')],
+                ["Grupo:", grupo, "", "Materia:", materia],
+                ["Tema Tratado:", tema],
+                [""],
+                ["N°", "Asiento", "Estudiante", "Respuesta / Estado", "Hora Voto"]
+            ];
+
+            historyLog.forEach((reg, idx) => {
+                wsData.push([idx + 1, reg.id, reg.studentName, colorMap[reg.code] || "Desconocido", reg.time]);
+            });
+
+            const worksheet = XLSX.utils.aoa_to_sheet(wsData);
+            worksheet['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 22 }, { wch: 28 }, { wch: 14 }];
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Informe_Sesion");
+
+            const fileNameGroup = grupo !== "No especificado" ? grupo.replace(/\s+/g, '_') : 'General';
+            XLSX.writeFile(workbook, `Informe_Clase_${fileNameGroup}.xlsx`);
+        });
+
+        const modal = document.getElementById('email-modal');
+
+        document.getElementById('btn-email-modal').addEventListener('click', () => {
+            if (historyLog.length === 0) {
+                alert('No hay registros de votación para enviar.');
+                return;
+            }
+
+            const docMail = document.getElementById('input-email-docente').value.trim() || "No configurado";
+            const instMail = document.getElementById('input-email-inst').value.trim() || "No configurado";
+
+            document.getElementById('modal-mail-docente').textContent = docMail;
+            document.getElementById('modal-mail-inst').textContent = instMail;
+
+            modal.classList.add('active');
+        });
+
+        document.getElementById('btn-cancel-modal').addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        // ENVÍO DE CORREO VÍA APLICACIÓN PREDETERMINADA (MAILTO)
+        document.getElementById('btn-send-emails').addEventListener('click', () => {
+            const sendDocente = document.getElementById('chk-docente').checked;
+            const sendInst = document.getElementById('chk-inst').checked;
+            const sendAdscripcion = document.getElementById('chk-adscripcion').checked;
+            const customMail = document.getElementById('input-custom-mail').value.trim();
+
+            const targetMails = [];
+            if (sendDocente) {
+                const m = document.getElementById('input-email-docente').value.trim();
+                if (m) targetMails.push(m);
+            }
+            if (sendInst) {
+                const m = document.getElementById('input-email-inst').value.trim();
+                if (m) targetMails.push(m);
+            }
+            if (sendAdscripcion) targetMails.push("adscripcion@liceo42.edu.uy");
+            if (customMail) targetMails.push(customMail);
+
+            if (targetMails.length === 0) {
+                alert("Por favor, selecciona o ingresa al menos un correo válido.");
+                return;
+            }
+
+            const docente = document.getElementById('input-docente').value.trim() || "No especificado";
+            const grupo = document.getElementById('select-grupo').value || "No especificado";
+            const materia = document.getElementById('select-materia').value || "No especificada";
+            const tema = document.getElementById('input-tema').value.trim() || "Sin tema registrado";
+            const fecha = new Date().toLocaleDateString('es-UY');
+
+            let cuerpoTexto = `INFORME DIGITAL DE CLASE - MIS LUCES HABLAN\n`;
+            cuerpoTexto += `Liceo N° 42 "José Pedro Cardoso"\n\n`;
+            cuerpoTexto += `Fecha: ${fecha}\n`;
+            cuerpoTexto += `Docente: ${docente}\n`;
+            cuerpoTexto += `Grupo: ${grupo} | Asignatura: ${materia}\n`;
+            cuerpoTexto += `Tema Tratado: ${tema}\n\n`;
+            cuerpoTexto += `--------------------------------------------------\n`;
+            cuerpoTexto += `DETALLE DE RESPUESTAS DE LOS ESTUDIANTES:\n`;
+            cuerpoTexto += `--------------------------------------------------\n\n`;
+
+            historyLog.forEach((reg, i) => {
+                cuerpoTexto += `${i + 1}. [${reg.id}] ${reg.studentName}: ${colorMap[reg.code]} (${reg.time})\n`;
+            });
+
+            cuerpoTexto += `\n--------------------------------------------------\n`;
+            cuerpoTexto += `Generado automáticamente por el Sistema Mis Luces Hablan.`;
+
+            const mailtoLink = `mailto:${targetMails.join(',')}?subject=${encodeURIComponent(`Informe de Clase - ${grupo} -${materia}`)}&body=${encodeURIComponent(cuerpoTexto)}`;
+            
+            window.location.href = mailtoLink;
+            modal.classList.remove('active');
+        });
+
+        initTeacherChart();
+        initStudentChart();
+        renderClassroom();
+    </script>
+</body>
+</html>
