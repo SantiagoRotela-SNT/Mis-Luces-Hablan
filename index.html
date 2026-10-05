@@ -1139,6 +1139,7 @@
             }
         });
 
+        // EXPORTAR EXCEL ESTILIZADO SEGÚN EL TEMA VISUAL SELECCIONADO
         document.getElementById('btn-excel').addEventListener('click', () => {
             if (historyLog.length === 0) { 
                 alert('No hay historial de votación para exportar.'); 
@@ -1148,15 +1149,43 @@
             const docente = document.getElementById('input-docente').value.trim() || "No especificado";
             const grupo = document.getElementById('select-grupo').value || "No especificado";
             const materia = document.getElementById('select-materia').value || "No especificada";
-            const tema = document.getElementById('input-tema').value.trim() || "Sin tema registrado";
+            const temaTratado = document.getElementById('input-tema').value.trim() || "Sin tema registrado";
+            const fecha = new Date().toLocaleDateString('es-UY');
 
+            // Detectar el tema visual activo en la página
+            const currentTheme = document.getElementById('theme-select').value;
+
+            // Paletas de color para el Excel según el tema activo (Colores Hexadecimales sin '#')
+            const themePalettes = {
+                'default': { primary: '1E293B', textHeader: 'F8FAFC', accent: '38BDF8', lightBg: 'F1F5F9' },        // Noche Ejecutiva
+                'light-executive': { primary: '2563EB', textHeader: 'FFFFFF', accent: '3B82F6', lightBg: 'EFF6FF' },// Marmor Claro
+                'mint-corp': { primary: '0F231F', textHeader: 'E6F4F1', accent: '2DD4BF', lightBg: 'E6F4F1' },      // Menta Corporativo
+                'dark-cyber': { primary: '111827', textHeader: 'F3F4F6', accent: 'F43F5E', lightBg: 'FFF1F2' }      // Cyberpunk Rosa
+            };
+
+            const colors = themePalettes[currentTheme] || themePalettes['default'];
+
+            // Conteo rápido para el resumen
+            let v = 0, r = 0, a = 0, vi = 0;
+            historyLog.forEach(reg => {
+                if (reg.code === 1) v++;
+                if (reg.code === 2) r++;
+                if (reg.code === 3) a++;
+                if (reg.code === 4) vi++;
+            });
+
+            // Construcción de la matriz de datos para la planilla
             const wsData = [
                 ["LICEO N° 42 \"JOSÉ PEDRO CARDOSO\""],
-                ["Informe Digital de Clase - Mis Luces Hablan"],
+                ["Informe Pedagógico de Clase - Mis Luces Hablan"],
                 [""],
-                ["Docente:", docente, "", "Fecha:", new Date().toLocaleDateString('es-UY')],
-                ["Grupo:", grupo, "", "Materia:", materia],
-                ["Tema Tratado:", tema],
+                ["Docente:", docente, "", "Fecha:", fecha],
+                ["Grupo / Nivel:", grupo, "", "Asignatura:", materia],
+                ["Tema Tratado:", temaTratado],
+                [""],
+                ["RESUMEN DE VOTOS DE LA CLASE:"],
+                ["🟢 Comprendido", v, "🔴 Duda Crítica", r],
+                ["🟡 En Proceso", a, "🟣 Consulta Privada", vi],
                 [""],
                 ["N°", "Asiento", "Estudiante", "Respuesta / Estado", "Hora Voto"]
             ];
@@ -1166,13 +1195,94 @@
             });
 
             const worksheet = XLSX.utils.aoa_to_sheet(wsData);
-            worksheet['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 22 }, { wch: 28 }, { wch: 14 }];
+
+            // Anchos de columna optimizados
+            worksheet['!cols'] = [
+                { wch: 8 },  // N°
+                { wch: 14 }, // Asiento
+                { wch: 25 }, // Estudiante
+                { wch: 26 }, // Respuesta / Estado
+                { wch: 15 }  // Hora Voto
+            ];
+
+            // Estilos comunes
+            const styleHeaderTitle = {
+                font: { name: 'Arial', sz: 14, bold: true, color: { rgb: colors.textHeader } },
+                fill: { fgColor: { rgb: colors.primary } },
+                alignment: { horizontal: 'center', vertical: 'center' }
+            };
+
+            const styleSubTitle = {
+                font: { name: 'Arial', sz: 11, italic: true, color: { rgb: colors.textHeader } },
+                fill: { fgColor: { rgb: colors.primary } },
+                alignment: { horizontal: 'center', vertical: 'center' }
+            };
+
+            const styleTableHeader = {
+                font: { name: 'Arial', sz: 11, bold: true, color: { rgb: colors.textHeader } },
+                fill: { fgColor: { rgb: colors.primary } },
+                alignment: { horizontal: 'center', vertical: 'center' },
+                border: {
+                    bottom: { style: 'medium', color: { rgb: '000000' } }
+                }
+            };
+
+            const styleLabelBold = {
+                font: { name: 'Arial', sz: 10, bold: true },
+                alignment: { horizontal: 'left' }
+            };
+
+            // Aplicar estilos a celdas clave
+            
+            // Título Principal y Subtítulo (Unir celdas A1:E1 y A2:E2)
+            worksheet['!merges'] = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, // Título Liceo
+                { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }, // Subtítulo
+                { s: { r: 5, c: 1 }, e: { r: 5, c: 4 } }  // Tema expandido
+            ];
+
+            worksheet['A1'].s = styleHeaderTitle;
+            worksheet['A2'].s = styleSubTitle;
+
+            // Etiquetas en negrita de la sesión
+            ['A4', 'D4', 'A5', 'D5', 'A6', 'A8'].forEach(cell => {
+                if (worksheet[cell]) worksheet[cell].s = styleLabelBold;
+            });
+
+            // Encabezados de la tabla principal (Fila 12)
+            ['A12', 'B12', 'C12', 'D12', 'E12'].forEach(cell => {
+                if (worksheet[cell]) worksheet[cell].s = styleTableHeader;
+            });
+
+            // Dar formato a las filas de datos con colores temáticos para el estado
+            const rowCount = historyLog.length;
+            for (let i = 0; i < rowCount; i++) {
+                const rowIndex = 13 + i; // La lista empieza en la fila 13 de Excel
+                const isEven = i % 2 === 0;
+                const rowBgColor = isEven ? 'FFFFFF' : colors.lightBg;
+
+                const baseRowStyle = {
+                    font: { name: 'Arial', sz: 10 },
+                    fill: { fgColor: { rgb: rowBgColor } },
+                    alignment: { vertical: 'center' }
+                };
+
+                ['A', 'B', 'C', 'D', 'E'].forEach(col => {
+                    const cellKey = `${col}${rowIndex}`;
+                    if (worksheet[cellKey]) {
+                        worksheet[cellKey].s = { ...baseRowStyle };
+                        if (col === 'A' || col === 'B' || col === 'E') {
+                            worksheet[cellKey].s.alignment = { horizontal: 'center', vertical: 'center' };
+                        }
+                    }
+                });
+            }
 
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Informe_Sesion");
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Informe_Sesión");
 
             const fileNameGroup = grupo !== "No especificado" ? grupo.replace(/\s+/g, '_') : 'General';
-            XLSX.writeFile(workbook, `Informe_Clase_${fileNameGroup}.xlsx`);
+            XLSX.writeFile(workbook, `Informe_${fileNameGroup}_${fecha.replace(/\//g, '-')}.xlsx`);
         });
 
         const modal = document.getElementById('email-modal');
