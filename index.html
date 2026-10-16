@@ -1021,17 +1021,17 @@
         <div class="class-info-grid">
             <div class="input-field-group">
                 <label for="input-docente"><i class="fa-solid fa-user-tie"></i> Docente A Cargo</label>
-                <input type="text" id="input-docente" placeholder="Ej: Prof. María José" />
+                <input type="text" id="input-docente" placeholder="Ej: Prof. María García" />
             </div>
 
             <div class="input-field-group">
                 <label for="input-email-docente"><i class="fa-solid fa-envelope"></i> Correo Docente</label>
-                <input type="email" id="input-email-docente" placeholder="" />
+                <input type="email" id="input-email-docente" placeholder="profesor@liceo42.edu.uy" />
             </div>
 
             <div class="input-field-group">
                 <label for="input-email-inst"><i class="fa-solid fa-building-columns"></i> Correo Institución</label>
-                <input type="email" id="input-email-inst" placeholder="" />
+                <input type="email" id="input-email-inst" value="direccion@liceo42.edu.uy" />
             </div>
 
             <div class="input-field-group">
@@ -1831,7 +1831,10 @@
             }
 
             document.getElementById('student-mode-title').innerHTML = `<i class="fa-solid fa-users-viewfinder"></i> ${dispDef.title}`;
-            document.getElementById('student-active-count').innerHTML = `<i class="fa-solid fa-check-to-slot"></i> Votos registrados: ${dispVotesCount} / ${activePresentStudents}`;
+            
+            // En vista estudiante solo contamos votos visibles si no es quiz
+            const publicVotesCount = dispRound.mode === 'quiz' ? dispVotesCount : (sv + sa + sr);
+            document.getElementById('student-active-count').innerHTML = `<i class="fa-solid fa-check-to-slot"></i> Votos registrados: ${publicVotesCount} / ${activePresentStudents}`;
 
             const studentQuestionDisplay = document.getElementById('student-question-display');
             const optionsGrid = document.getElementById('student-options-grid');
@@ -1952,13 +1955,19 @@
 
             if (studentChartInstance) studentChartInstance.destroy();
 
+            // Filtrar las etiquetas y colores si es diagnostico/semaforo (solo 3) o quiz (4)
+            const isQuiz = dispRound.mode === 'quiz';
+            const chartLabels = isQuiz ? def.shortLabels : [def.shortLabels[0], def.shortLabels[1], def.shortLabels[2]];
+            const chartColors = isQuiz ? def.colors : [def.colors[0], def.colors[1], def.colors[2]];
+            const initialData = isQuiz ? [0, 0, 0, 0] : [0, 0, 0];
+
             studentChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: [def.shortLabels[0], def.shortLabels[1], def.shortLabels[2], def.shortLabels[3]],
+                    labels: chartLabels,
                     datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: def.colors,
+                        data: initialData,
+                        backgroundColor: chartColors,
                         borderWidth: 0
                     }]
                 },
@@ -1982,7 +1991,7 @@
         }
 
         function updateCharts() {
-            // DOCENTE
+            // DOCENTE (Muestra los 4 siempre)
             let tv = 0, ta = 0, tr = 0, tvi = 0;
             for (let i = 0; i < totalDesks; i++) {
                 if (!retiredStudents[i]) {
@@ -2002,7 +2011,7 @@
                 teacherChartInstance.update();
             }
 
-            // ESTUDIANTES
+            // ESTUDIANTES (Diagnostico/Semaforo muestran solo 3; Quiz muestra 4)
             const dispRound = rounds[studentDisplayedRoundIndex] || rounds[0];
             let sv = 0, sa = 0, sr = 0, svi = 0;
 
@@ -2020,7 +2029,11 @@
             }
 
             if (studentChartInstance) {
-                studentChartInstance.data.datasets[0].data = [sv, sa, sr, svi];
+                if (dispRound.mode === 'quiz') {
+                    studentChartInstance.data.datasets[0].data = [sv, sa, sr, svi];
+                } else {
+                    studentChartInstance.data.datasets[0].data = [sv, sa, sr];
+                }
                 studentChartInstance.update();
             }
         }
@@ -2237,7 +2250,6 @@
             studentSelect.innerHTML = '';
 
             rounds.forEach((round, index) => {
-                // ICONOS SEGÚN MODALIDAD
                 let iconClass = 'fa-bookmark';
                 if (round.mode === 'diagnostico') iconClass = 'fa-bullseye';
                 if (round.mode === 'semaforo') iconClass = 'fa-traffic-light';
@@ -2263,7 +2275,6 @@
 
                 container.appendChild(btn);
 
-                // LLENAR SELECTOR EN VISTA ESTUDIANTE
                 const opt = document.createElement('option');
                 opt.value = index;
                 opt.textContent = `${round.title} (${modeDefinitions[round.mode || 'semaforo'].title})`;
@@ -2291,7 +2302,6 @@
         function switchTab(index) {
             if (index < 0 || index >= rounds.length) return;
 
-            // GUARDAR ESTADO DE LA PESTAÑA ACTUAL
             rounds[activeRoundIndex].votes = { ...votes };
             rounds[activeRoundIndex].topic = document.getElementById('input-tema').value.trim() || rounds[activeRoundIndex].topic || "General";
             rounds[activeRoundIndex].question = inputQuestionText.value.trim();
@@ -2302,7 +2312,6 @@
                 d: inputOptD.value.trim()
             };
 
-            // CAMBIAR A LA NUEVA PESTAÑA
             activeRoundIndex = index;
             const currentRound = rounds[activeRoundIndex];
             
@@ -2331,10 +2340,10 @@
             updateModeLabels();
             renderTabs();
             initTeacherChart();
+            initStudentChart();
             renderClassroom();
         }
 
-        // MODAL CREACIÓN DE NUEVA PESTAÑA
         const newTabModal = document.getElementById('new-tab-modal');
         const selectNewTabMode = document.getElementById('select-new-tab-mode');
 
