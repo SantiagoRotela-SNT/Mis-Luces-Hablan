@@ -216,6 +216,8 @@
         .btn-excel { background-color: #10b981; color: #ffffff; }
         .btn-email { background-color: #8b5cf6; color: #ffffff; }
         .btn-reset { background-color: #ef4444; color: #ffffff; }
+        .btn-reveal { background-color: #10b981; color: #ffffff; border: 1px solid #059669; }
+        .btn-reveal.revealed { background-color: #6b7280; border-color: #4b5563; }
         .btn-mode { 
             background: linear-gradient(135deg, var(--accent-primary), #6366f1); 
             color: #ffffff; 
@@ -613,6 +615,88 @@
             animation: fadeIn 0.5s ease;
         }
 
+        .options-grid-student {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin: 24px 0;
+            width: 100%;
+        }
+
+        .option-card-student {
+            background: var(--card-bg-solid);
+            border: 2px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s ease;
+        }
+
+        .option-card-student.is-correct {
+            border-color: var(--color-verde) !important;
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.4) !important;
+            animation: popIn 0.4s ease;
+        }
+
+        .option-left-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .opt-letter-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #ffffff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .opt-a .opt-letter-badge { background: linear-gradient(135deg, #10b981, #059669); }
+        .opt-b .opt-letter-badge { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .opt-c .opt-letter-badge { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .opt-d .opt-letter-badge { background: linear-gradient(135deg, #a855f7, #7e22ce); }
+
+        .opt-text-main {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .opt-votes-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        .opt-votes-count {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+        }
+
+        .opt-votes-pct {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -685,7 +769,7 @@
             background-color: var(--card-bg-solid);
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
-            padding: 8px 14px 8px 18px;
+            padding: 8px 14px 8px 16px;
             border-radius: 16px;
             font-size: 0.9rem;
             font-weight: 700;
@@ -696,12 +780,13 @@
             white-space: nowrap;
             transition: all 0.25s ease;
             box-shadow: none;
+            user-select: none;
         }
 
         .tab-button:hover {
             border-color: var(--accent-primary);
             color: var(--text-primary);
-            transform: none;
+            transform: translateY(-2px);
         }
 
         .tab-button.active-tab {
@@ -711,13 +796,19 @@
             box-shadow: 0 4px 14px var(--accent-glow);
         }
 
+        .tab-title-click {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .btn-delete-tab {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: inherit;
-            font-size: 0.9rem;
-            opacity: 0.6;
-            padding: 2px 6px;
+            font-size: 0.85rem;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             cursor: pointer;
             display: inline-flex;
@@ -725,12 +816,12 @@
             justify-content: center;
             box-shadow: none;
             transition: all 0.2s ease;
+            margin-left: 4px;
         }
 
         .btn-delete-tab:hover {
-            opacity: 1;
-            background-color: rgba(239, 68, 68, 0.3);
-            color: #ef4444;
+            background-color: #ef4444 !important;
+            color: #ffffff !important;
             transform: scale(1.15);
         }
 
@@ -738,7 +829,7 @@
             background-color: rgba(255, 255, 255, 0.05);
             color: var(--accent-primary);
             border: 2px dashed var(--accent-primary);
-            padding: 10px 16px;
+            padding: 8px 16px;
             border-radius: 16px;
             font-size: 1.1rem;
             font-weight: 800;
@@ -797,6 +888,21 @@
 
         .toast-message.toast-info { border-color: var(--accent-primary); box-shadow: 0 0 15px var(--accent-glow); }
         .toast-message.toast-info i { color: var(--accent-primary); font-size: 1.2rem; }
+
+        .quiz-correct-badge {
+            margin-top: 12px;
+            padding: 10px 18px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--color-verde);
+            color: var(--color-verde);
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            animation: popIn 0.35s ease;
+        }
 
         @keyframes slideInRight {
             from { opacity: 0; transform: translateX(50px); }
@@ -883,7 +989,7 @@
             <div class="controls-group">
                 <button id="btn-serial" class="btn-connect"><i class="fa-solid fa-plug"></i> Conectar Receptor USB</button>
                 <button id="btn-sim-group" class="btn-sim"><i class="fa-solid fa-wand-magic-sparkles"></i> Simular Clase</button>
-                <button id="btn-reset" class="btn-reset"><i class="fa-solid fa-rotate-right"></i> Reiniciar</button>
+                <button id="btn-reset" class="btn-reset"><i class="fa-solid fa-rotate-right"></i> Reiniciar Votación</button>
                 <button id="btn-excel" class="btn-excel"><i class="fa-solid fa-file-excel"></i> Descargar Excel</button>
                 <button id="btn-email-modal" class="btn-email"><i class="fa-solid fa-paper-plane"></i> Enviar Correo</button>
             </div>
@@ -960,28 +1066,73 @@
         </div>
     </div>
 
-    <div class="class-info-card teacher-only" style="margin-bottom: 16px; padding: 16px 24px;">
-        <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;">
-            <i class="fa-solid fa-layer-group"></i> Votaciones de la Sesión:
+    <!-- CONFIGURACIÓN DE PESTAÑAS Y OPCIONES DE LA VOTACIÓN ACTIVA -->
+    <div class="class-info-card teacher-only" style="margin-bottom: 16px; padding: 20px 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">
+                <i class="fa-solid fa-sliders"></i> Ventana de Votación Activa: <span id="active-mode-badge" style="color: var(--accent-primary); font-weight: 800;"></span>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <select id="select-correct-answer" style="display: none; background: rgba(16, 185, 129, 0.2); border-color: var(--color-verde); color: var(--color-verde); font-weight: 800;">
+                    <option value="none">-- Sin Respuesta Correcta --</option>
+                    <option value="1">🟢 Respuesta Correcta: A</option>
+                    <option value="3">🟡 Respuesta Correcta: B</option>
+                    <option value="2">🔴 Respuesta Correcta: C</option>
+                    <option value="4">🟣 Respuesta Correcta: D</option>
+                </select>
+
+                <button type="button" id="btn-toggle-reveal" class="btn-reveal" style="display: none;">
+                    <i class="fa-solid fa-eye"></i> Mostrar Respuesta Correcta
+                </button>
+            </div>
         </div>
-        <div id="tabs-container" style="display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 4px;"></div>
+
+        <!-- FORMULARIO SOLO VISIBLE EN "EVALUACIÓN DE OPCIONES" -->
+        <div id="quiz-inputs-wrapper" style="display: none; flex-direction: column; gap: 16px; margin-bottom: 16px;">
+            <div class="input-field-group">
+                <label for="input-question-text"><i class="fa-solid fa-circle-question"></i> Enunciado de la Pregunta / Consigna</label>
+                <input type="text" id="input-question-text" placeholder="Ej: ¿Cuál es la Primera Ley de Newton?" style="font-weight: 700; font-size: 0.95rem;">
+            </div>
+
+            <div class="class-info-grid">
+                <div class="input-field-group">
+                    <label style="color: var(--color-verde);"><i class="fa-solid fa-font"></i> Opción A (Verde)</label>
+                    <input type="text" id="input-opt-a" placeholder="Ej: Ley de Inercia">
+                </div>
+                <div class="input-field-group">
+                    <label style="color: var(--color-amarillo);"><i class="fa-solid fa-font"></i> Opción B (Amarillo)</label>
+                    <input type="text" id="input-opt-b" placeholder="Ej: F = m * a">
+                </div>
+                <div class="input-field-group">
+                    <label style="color: var(--color-rojo);"><i class="fa-solid fa-font"></i> Opción C (Rojo)</label>
+                    <input type="text" id="input-opt-c" placeholder="Ej: Acción y Reacción">
+                </div>
+                <div class="input-field-group">
+                    <label style="color: var(--color-violeta);"><i class="fa-solid fa-font"></i> Opción D (Violeta)</label>
+                    <input type="text" id="input-opt-d" placeholder="Ej: Gravitación">
+                </div>
+            </div>
+        </div>
+
+        <div id="tabs-container" style="display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-top: 10px; border-top: 1px solid var(--border-color);"></div>
     </div>
 
     <div class="summary-bar">
         <div class="stat-card v-verde">
-            <div class="stat-label"><i class="fa-solid fa-circle-check" style="color: var(--color-verde);"></i> Entendí</div>
+            <div class="stat-label" id="label-verde"><i class="fa-solid fa-circle-check" style="color: var(--color-verde);"></i> Entendí</div>
             <div id="count-verde" class="stat-value">0</div>
         </div>
-        <div class="stat-card v-rojo">
-            <div class="stat-label"><i class="fa-solid fa-circle-exclamation" style="color: var(--color-rojo);"></i> No entendí</div>
-            <div id="count-rojo" class="stat-value">0</div>
-        </div>
         <div class="stat-card v-amarillo">
-            <div class="stat-label"><i class="fa-solid fa-spinner" style="color: var(--color-amarillo);"></i> Tengo dudas</div>
+            <div class="stat-label" id="label-amarillo"><i class="fa-solid fa-spinner" style="color: var(--color-amarillo);"></i> Tengo dudas</div>
             <div id="count-amarillo" class="stat-value">0</div>
         </div>
+        <div class="stat-card v-rojo">
+            <div class="stat-label" id="label-rojo"><i class="fa-solid fa-circle-exclamation" style="color: var(--color-rojo);"></i> No entendí</div>
+            <div id="count-rojo" class="stat-value">0</div>
+        </div>
         <div class="stat-card v-violeta teacher-only">
-            <div class="stat-label"><i class="fa-solid fa-lock" style="color: var(--color-violeta);"></i> Consulta privada</div>
+            <div class="stat-label" id="label-violeta"><i class="fa-solid fa-lock" style="color: var(--color-violeta);"></i> Consulta privada</div>
             <div id="count-violeta" class="stat-value">0</div>
         </div>
         <div class="stat-card">
@@ -999,7 +1150,7 @@
             <div id="teacher-panel-chart" class="view-panel">
                 <div class="chart-box">
                     <div class="chart-header">
-                        <h3><i class="fa-solid fa-chart-column"></i> Distribución General del Conocimiento</h3>
+                        <h3><i class="fa-solid fa-chart-column"></i> Distribución General de Respuestas</h3>
                         <select id="teacher-chart-type">
                             <option value="doughnut">🍩 Gráfico de Dona</option>
                             <option value="bar">📊 Gráfico de Barras</option>
@@ -1014,11 +1165,25 @@
         </div>
 
         <div class="student-view-container chart-box" id="student-view">
-            <div class="chart-header" style="justify-content: center; flex-direction: column; gap: 8px;">
-                <h3><i class="fa-solid fa-users-viewfinder"></i> Resultados Colectivos de la Clase</h3>
-                <span id="student-active-count" style="font-size: 1.1rem; color: var(--accent-primary); font-weight: 700;">
+            <!-- CONTROL EXCLUSIVO PARA EL DOCENTE EN LA PANTALLA DE ESTUDIANTES -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 20px; background: var(--card-bg-solid); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border-color);">
+                <label for="select-student-displayed-round" style="font-weight: 700; color: var(--accent-primary); font-size: 0.9rem;">
+                    <i class="fa-solid fa-desktop"></i> Votación Visible a Estudiantes:
+                </label>
+                <select id="select-student-displayed-round" style="background: var(--bg-body); font-weight: 700; max-width: 300px;">
+                </select>
+            </div>
+
+            <div class="chart-header" style="justify-content: center; flex-direction: column; gap: 8px; text-align: center;">
+                <h2 id="student-question-display" style="font-family:'Outfit',sans-serif; font-size:1.8rem; margin:0; color:var(--text-primary);"></h2>
+                <h4 id="student-mode-title" style="margin:4px 0 0 0; color:var(--accent-primary); font-weight:600;"><i class="fa-solid fa-users-viewfinder"></i> Resultados Colectivos</h4>
+                
+                <div id="student-options-grid" class="options-grid-student"></div>
+
+                <span id="student-active-count" style="font-size: 1.1rem; color: var(--accent-primary); font-weight: 700; margin-top:8px;">
                     <i class="fa-solid fa-check-to-slot"></i> Votos registrados: 0 / 30
                 </span>
+                <div id="student-correct-display"></div>
             </div>
             <div class="chart-wrapper">
                 <canvas id="studentChartCanvas"></canvas>
@@ -1026,6 +1191,47 @@
         </div>
     </main>
 
+    <!-- MODAL PARA ELEGIR TIPO DE PESTAÑA NUEVA -->
+    <div class="modal-overlay" id="new-tab-modal">
+        <div class="modal-card" style="max-width: 440px;">
+            <h3><i class="fa-solid fa-folder-plus" style="color: var(--accent-primary);"></i> Crear Nueva Ventana</h3>
+            <p>Selecciona la modalidad pedagógica para la nueva ventana:</p>
+            
+            <div class="input-field-group" style="margin-bottom: 24px;">
+                <label for="select-new-tab-mode"><i class="fa-solid fa-sliders"></i> Modalidad de Votación</label>
+                <select id="select-new-tab-mode" style="font-weight: 700;">
+                    <option value="diagnostico">🎯 Diagnóstico de Inicio</option>
+                    <option value="semaforo">🚥 Semáforo de Comprensión</option>
+                    <option value="quiz">📝 Evaluación de Opciones</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="btn-cancel-new-tab" style="background-color: transparent; color: var(--text-primary); border: 1px solid var(--border-color);">Cancelar</button>
+                <button type="button" id="btn-confirm-new-tab" class="btn-connect"><i class="fa-solid fa-plus"></i> Crear Ventana</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PERSONALIZACIÓN DE ALUMNOS -->
+    <div class="modal-overlay" id="custom-students-modal">
+        <div class="modal-card" style="max-width: 420px;">
+            <h3><i class="fa-solid fa-users-gear" style="color: var(--accent-primary);"></i> Cantidad de Alumnos</h3>
+            <p>Ingresa la cantidad exacta de estudiantes presentes en la sala (de 1 a 100):</p>
+            
+            <div class="input-field-group" style="margin-bottom: 24px;">
+                <label for="input-custom-students-num"><i class="fa-solid fa-hashtag"></i> Total de Estudiantes</label>
+                <input type="number" id="input-custom-students-num" min="1" max="100" placeholder="Ej: 22" style="font-size: 1.1rem; font-weight: 800; text-align: center;">
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="btn-cancel-custom-students" style="background-color: transparent; color: var(--text-primary); border: 1px solid var(--border-color);">Cancelar</button>
+                <button type="button" id="btn-save-custom-students" class="btn-connect"><i class="fa-solid fa-check"></i> Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ENVÍO DE CORREO -->
     <div class="modal-overlay" id="email-modal">
         <div class="modal-card">
             <h3><i class="fa-solid fa-envelope-circle-check" style="color: var(--accent-primary);"></i> Confirmar Envío de Informe</h3>
@@ -1069,6 +1275,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIRMACIÓN -->
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal-card" style="max-width: 440px;">
             <h3 id="confirm-modal-title"><i class="fa-solid fa-triangle-exclamation" style="color: var(--color-amarillo);"></i> ¿Confirmar Acción?</h3>
@@ -1084,6 +1291,27 @@
         (function() {
             emailjs.init("SywcfkJ91fIUfMRJT");
         })();
+
+        const modeDefinitions = {
+            semaforo: {
+                title: "Semáforo de Comprensión",
+                labels: ["🟢 Entendí", "🟡 Tengo dudas", "🔴 No entendí", "🟣 Consulta privada"],
+                shortLabels: ["Entendí", "Tengo dudas", "No entendí", "Consulta privada"],
+                colors: ['#10b981', '#f59e0b', '#ef4444', '#a855f7']
+            },
+            diagnostico: {
+                title: "Diagnóstico de Inicio",
+                labels: ["🟢 Lo manejo", "🟡 Algo sé", "🔴 No lo conozco", "🟣 Consulta privada"],
+                shortLabels: ["Lo manejo", "Algo sé", "No lo conozco", "Consulta privada"],
+                colors: ['#10b981', '#f59e0b', '#ef4444', '#a855f7']
+            },
+            quiz: {
+                title: "Evaluación de Opciones",
+                labels: ["🟢 Opción A", "🟡 Opción B", "🔴 Opción C", "🟣 Opción D"],
+                shortLabels: ["Opción A", "Opción B", "Opción C", "Opción D"],
+                colors: ['#10b981', '#f59e0b', '#ef4444', '#a855f7']
+            }
+        };
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -1132,13 +1360,9 @@
 
         const baseNames = ["Lucas M.", "Sofía R.", "Mateo G.", "Valentina L.", "Joaquín C.", "Camila B.", "Agustín P.", "Isabella D.", "Nicolás F.", "Martina S.", "Thiago A.", "Lucía V.", "Benjamin H.", "Emma T.", "Felipe O.", "Juliet N.", "Gabriel K.", "Mía E.", "Emanuel I.", "Victoria Q.", "Santiago W.", "Elena J.", "Bruno Y.", "Clara U.", "Ignacio X.", "Zoe L.", "Dante M.", "Renata P.", "Lautaro S.", "Paulina R."];
         let studentList = [...baseNames];
-        for (let i = 31; i <= 100; i++) {
-            studentList.push(`Estudiante ${i}`);
-        }
+        for (let i = 31; i <= 100; i++) studentList.push(`Estudiante ${i}`);
 
         let retiredStudents = {}; 
-        const colorMap = { 1: "🟢 Entendí", 2: "🔴 No entendí", 3: "🟡 Tengo dudas", 4: "🟣 Consulta privada" };
-        
         let selectStudentsElem = document.getElementById('select-total-students');
         let totalDesks = parseInt(selectStudentsElem.value);
         let currentThemeValue = 'default';
@@ -1149,7 +1373,45 @@
         let port, reader;
         let draggedIndex = null;
 
-        // ESCUCHA DE EVENTOS PARA SINCRONIZACIÓN EN TIEMPO REAL ENTRE MÚLTIPLES VENTANAS/PANTALLAS
+        // 3 PESTAÑAS PREDETERMINADAS POR DEFECTO
+        let rounds = [
+            { 
+                id: 101, 
+                title: "Diagnóstico", 
+                topic: "General", 
+                question: "", 
+                options: { a: "", b: "", c: "", d: "" }, 
+                mode: "diagnostico", 
+                correctAnswer: "none", 
+                isRevealed: false,
+                votes: {} 
+            },
+            { 
+                id: 102, 
+                title: "Semáforo", 
+                topic: "General", 
+                question: "", 
+                options: { a: "", b: "", c: "", d: "" }, 
+                mode: "semaforo", 
+                correctAnswer: "none", 
+                isRevealed: false,
+                votes: {} 
+            },
+            { 
+                id: 103, 
+                title: "Evaluación", 
+                topic: "General", 
+                question: "", 
+                options: { a: "", b: "", c: "", d: "" }, 
+                mode: "quiz", 
+                correctAnswer: "none", 
+                isRevealed: false,
+                votes: {} 
+            }
+        ];
+        let activeRoundIndex = 0;
+        let studentDisplayedRoundIndex = 0; // Pestaña que los alumnos ven en su pantalla
+
         window.addEventListener('storage', (event) => {
             if (event.key === 'mlh_votes_v13') {
                 votes = JSON.parse(event.newValue) || {};
@@ -1157,31 +1419,45 @@
             }
         });
 
+        // MODAL PERSONALIZADO DE ALUMNOS
+        const customStudentsModal = document.getElementById('custom-students-modal');
+        const inputCustomStudentsNum = document.getElementById('input-custom-students-num');
+
         selectStudentsElem.addEventListener('change', (e) => {
             if (e.target.value === 'custom') {
-                const customVal = prompt("Ingresa la cantidad exacta de estudiantes (ejemplo: 18, 35, 42):", totalDesks);
-                const parsedVal = parseInt(customVal);
-
-                if (!isNaN(parsedVal) && parsedVal > 0 && parsedVal <= 100) {
-                    totalDesks = parsedVal;
-                    let opt = selectStudentsElem.querySelector('option[data-custom="true"]');
-                    if (!opt) {
-                        opt = document.createElement('option');
-                        opt.setAttribute('data-custom', 'true');
-                        selectStudentsElem.insertBefore(opt, selectStudentsElem.lastElementChild);
-                    }
-                    opt.value = parsedVal;
-                    opt.textContent = `${parsedVal} (Personalizado)`;
-                    selectStudentsElem.value = parsedVal;
-                    showToast(`Cantidad ajustada a ${parsedVal} estudiantes.`, 'info');
-                } else {
-                    selectStudentsElem.value = totalDesks;
-                }
+                inputCustomStudentsNum.value = totalDesks;
+                customStudentsModal.classList.add('active');
             } else {
                 totalDesks = parseInt(e.target.value);
                 showToast(`Cantidad ajustada a ${totalDesks} estudiantes.`, 'info');
+                renderClassroom();
             }
-            renderClassroom();
+        });
+
+        document.getElementById('btn-cancel-custom-students').addEventListener('click', () => {
+            selectStudentsElem.value = totalDesks;
+            customStudentsModal.classList.remove('active');
+        });
+
+        document.getElementById('btn-save-custom-students').addEventListener('click', () => {
+            const parsedVal = parseInt(inputCustomStudentsNum.value);
+            if (!isNaN(parsedVal) && parsedVal > 0 && parsedVal <= 100) {
+                totalDesks = parsedVal;
+                let opt = selectStudentsElem.querySelector('option[data-custom="true"]');
+                if (!opt) {
+                    opt = document.createElement('option');
+                    opt.setAttribute('data-custom', 'true');
+                    selectStudentsElem.insertBefore(opt, selectStudentsElem.lastElementChild);
+                }
+                opt.value = parsedVal;
+                opt.textContent = `${parsedVal} (Personalizado)`;
+                selectStudentsElem.value = parsedVal;
+                customStudentsModal.classList.remove('active');
+                showToast(`Cantidad ajustada a ${parsedVal} estudiantes.`, 'info');
+                renderClassroom();
+            } else {
+                showToast("Por favor ingresa un número válido entre 1 y 100.", "warning");
+            }
         });
 
         const themeDropdown = document.getElementById('theme-dropdown');
@@ -1214,9 +1490,7 @@
                 
                 const isStudentMode = document.body.classList.contains('student-mode');
                 document.body.className = theme === 'default' ? '' : `theme-${theme}`;
-                if (isStudentMode) {
-                    document.body.classList.add('student-mode');
-                }
+                if (isStudentMode) document.body.classList.add('student-mode');
 
                 document.getElementById('current-theme-icon').innerHTML = themeIconMap[theme];
                 themeDropdown.classList.remove('active');
@@ -1255,6 +1529,73 @@
                 materiaSelect.appendChild(opt);
             });
         });
+
+        const selectCorrectAnswer = document.getElementById('select-correct-answer');
+        const btnToggleReveal = document.getElementById('btn-toggle-reveal');
+        const quizInputsWrapper = document.getElementById('quiz-inputs-wrapper');
+        const inputQuestionText = document.getElementById('input-question-text');
+        const inputOptA = document.getElementById('input-opt-a');
+        const inputOptB = document.getElementById('input-opt-b');
+        const inputOptC = document.getElementById('input-opt-c');
+        const inputOptD = document.getElementById('input-opt-d');
+
+        selectCorrectAnswer.addEventListener('change', (e) => {
+            rounds[activeRoundIndex].correctAnswer = e.target.value;
+            updateCharts();
+            recalculateTotals();
+        });
+
+        btnToggleReveal.addEventListener('click', () => {
+            const currentRound = rounds[activeRoundIndex];
+            currentRound.isRevealed = !currentRound.isRevealed;
+            
+            updateRevealButtonUI();
+            recalculateTotals();
+
+            if (currentRound.isRevealed) {
+                showToast("Respuesta correcta revelada a los estudiantes.", "success");
+            } else {
+                showToast("Respuesta correcta ocultada.", "info");
+            }
+        });
+
+        function updateRevealButtonUI() {
+            const currentRound = rounds[activeRoundIndex];
+            if (currentRound.isRevealed) {
+                btnToggleReveal.innerHTML = `<i class="fa-solid fa-eye-slash"></i> Ocultar Respuesta`;
+                btnToggleReveal.classList.add('revealed');
+            } else {
+                btnToggleReveal.innerHTML = `<i class="fa-solid fa-eye"></i> Mostrar Respuesta Correcta`;
+                btnToggleReveal.classList.remove('revealed');
+            }
+        }
+
+        inputQuestionText.addEventListener('input', (e) => {
+            rounds[activeRoundIndex].question = e.target.value;
+            recalculateTotals();
+        });
+
+        [inputOptA, inputOptB, inputOptC, inputOptD].forEach((input, i) => {
+            const keys = ['a', 'b', 'c', 'd'];
+            input.addEventListener('input', (e) => {
+                if (!rounds[activeRoundIndex].options) rounds[activeRoundIndex].options = {};
+                rounds[activeRoundIndex].options[keys[i]] = e.target.value;
+                recalculateTotals();
+            });
+        });
+
+        function updateModeLabels() {
+            const currentRound = rounds[activeRoundIndex];
+            const currentModeKey = currentRound.mode || 'semaforo';
+            const def = modeDefinitions[currentModeKey];
+
+            document.getElementById('label-verde').innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--color-verde);"></i> ${def.shortLabels[0]}`;
+            document.getElementById('label-amarillo').innerHTML = `<i class="fa-solid fa-spinner" style="color: var(--color-amarillo);"></i> ${def.shortLabels[1]}`;
+            document.getElementById('label-rojo').innerHTML = `<i class="fa-solid fa-circle-exclamation" style="color: var(--color-rojo);"></i> ${def.shortLabels[2]}`;
+            document.getElementById('label-violeta').innerHTML = `<i class="fa-solid fa-lock" style="color: var(--color-violeta);"></i> ${def.shortLabels[3]}`;
+
+            document.getElementById('active-mode-badge').textContent = def.title;
+        }
 
         function getComputedTextColor() {
             return getComputedStyle(document.body).getPropertyValue('--text-primary').trim() || '#f8fafc';
@@ -1323,6 +1664,7 @@
             const time = new Date().toLocaleTimeString();
 
             votes[id] = { code, studentName, time };
+            rounds[activeRoundIndex].votes[id] = { code, studentName, time };
             localStorage.setItem('mlh_votes_v13', JSON.stringify(votes));
 
             renderClassroom();
@@ -1431,6 +1773,7 @@
             
             if (retiredStudents[index]) {
                 if (votes[id]) delete votes[id];
+                if (rounds[activeRoundIndex].votes[id]) delete rounds[activeRoundIndex].votes[id];
                 showToast(`${studentList[index]} marcado como retirado.`, 'warning');
             } else {
                 showToast(`${studentList[index]} reintegrado a la clase.`, 'info');
@@ -1453,20 +1796,96 @@
                         activeVotesCount++;
                         const code = votes[id].code;
                         if (code === 1) v++;
-                        if (code === 2) r++;
                         if (code === 3) a++;
+                        if (code === 2) r++;
                         if (code === 4) vi++;
                     }
                 }
             }
 
             document.getElementById('count-verde').textContent = v;
-            document.getElementById('count-rojo').textContent = r;
             document.getElementById('count-amarillo').textContent = a;
+            document.getElementById('count-rojo').textContent = r;
             document.getElementById('count-violeta').textContent = vi;
             document.getElementById('count-total').textContent = `${activeVotesCount} / ${activePresentStudents}`;
 
-            document.getElementById('student-active-count').innerHTML = `<i class="fa-solid fa-check-to-slot"></i> Votos registrados: ${activeVotesCount} / ${activePresentStudents}`;
+            // RENDERIZADO DE LA VISTA ESTUDIANTE BASADO EN LA PESTAÑA QUE EL DOCENTE ELIJA MOSTRAR
+            const dispRound = rounds[studentDisplayedRoundIndex] || rounds[0];
+            const dispDef = modeDefinitions[dispRound.mode || 'semaforo'];
+
+            let sv = 0, sa = 0, sr = 0, svi = 0;
+            let dispVotesCount = 0;
+
+            for (let i = 0; i < totalDesks; i++) {
+                if (!retiredStudents[i]) {
+                    const id = `M${i + 1}`;
+                    if (dispRound.votes && dispRound.votes[id]) {
+                        dispVotesCount++;
+                        const code = dispRound.votes[id].code;
+                        if (code === 1) sv++;
+                        if (code === 3) sa++;
+                        if (code === 2) sr++;
+                        if (code === 4) svi++;
+                    }
+                }
+            }
+
+            document.getElementById('student-mode-title').innerHTML = `<i class="fa-solid fa-users-viewfinder"></i> ${dispDef.title}`;
+            document.getElementById('student-active-count').innerHTML = `<i class="fa-solid fa-check-to-slot"></i> Votos registrados: ${dispVotesCount} / ${activePresentStudents}`;
+
+            const studentQuestionDisplay = document.getElementById('student-question-display');
+            const optionsGrid = document.getElementById('student-options-grid');
+            
+            if (dispRound.mode === 'quiz') {
+                studentQuestionDisplay.textContent = dispRound.question || "Pregunta de Evaluación";
+                studentQuestionDisplay.style.display = 'block';
+                optionsGrid.style.display = 'grid';
+                optionsGrid.innerHTML = '';
+                
+                const totalV = dispVotesCount || 1;
+                const counts = { a: sv, b: sa, c: sr, d: svi };
+                const codeMap = { a: '1', b: '3', c: '2', d: '4' };
+
+                const opts = [
+                    { cls: 'opt-a', key: 'a', letter: 'A', txt: (dispRound.options && dispRound.options.a) ? dispRound.options.a : 'Opción A' },
+                    { cls: 'opt-b', key: 'b', letter: 'B', txt: (dispRound.options && dispRound.options.b) ? dispRound.options.b : 'Opción B' },
+                    { cls: 'opt-c', key: 'c', letter: 'C', txt: (dispRound.options && dispRound.options.c) ? dispRound.options.c : 'Opción C' },
+                    { cls: 'opt-d', key: 'd', letter: 'D', txt: (dispRound.options && dispRound.options.d) ? dispRound.options.d : 'Opción D' }
+                ];
+
+                opts.forEach(o => {
+                    const card = document.createElement('div');
+                    const vCount = counts[o.key];
+                    const pct = dispVotesCount > 0 ? Math.round((vCount / totalV) * 100) : 0;
+                    const isCorrect = (dispRound.isRevealed && dispRound.correctAnswer === codeMap[o.key]);
+
+                    card.className = `option-card-student ${o.cls} ${isCorrect ? 'is-correct' : ''}`;
+                    card.innerHTML = `
+                        <div class="option-left-content">
+                            <span class="opt-letter-badge">${o.letter}</span>
+                            <span class="opt-text-main">${o.txt} ${isCorrect ? '🏆' : ''}</span>
+                        </div>
+                        <div class="opt-votes-right">
+                            <span class="opt-votes-count">${vCount}</span>
+                            <span class="opt-votes-pct">${pct}%</span>
+                        </div>
+                    `;
+                    optionsGrid.appendChild(card);
+                });
+            } else {
+                studentQuestionDisplay.style.display = 'none';
+                optionsGrid.style.display = 'none';
+                optionsGrid.innerHTML = '';
+            }
+
+            const studentCorrectDisplay = document.getElementById('student-correct-display');
+            if (dispRound.mode === 'quiz' && dispRound.correctAnswer !== 'none' && dispRound.isRevealed) {
+                const quizMap = { "1": "A", "3": "B", "2": "C", "4": "D" };
+                const optTxt = dispRound.options ? (dispRound.options[quizMap[dispRound.correctAnswer].toLowerCase()] || "") : "";
+                studentCorrectDisplay.innerHTML = `<div class="quiz-correct-badge"><i class="fa-solid fa-award"></i> Respuesta Correcta: Opción ${quizMap[dispRound.correctAnswer]} ${optTxt ? ' (' + optTxt + ')' : ''}</div>`;
+            } else {
+                studentCorrectDisplay.innerHTML = '';
+            }
 
             updateCharts();
         }
@@ -1475,6 +1894,8 @@
             const ctx = document.getElementById('teacherChartCanvas').getContext('2d');
             const type = document.getElementById('teacher-chart-type').value;
             const textColor = getComputedTextColor();
+            const currentRound = rounds[activeRoundIndex];
+            const def = modeDefinitions[currentRound.mode || 'semaforo'];
 
             if (teacherChartInstance) teacherChartInstance.destroy();
 
@@ -1483,11 +1904,11 @@
             teacherChartInstance = new Chart(ctx, {
                 type: type,
                 data: {
-                    labels: ['Entendí', 'No entendí', 'Tengo dudas', 'Consulta privada'],
+                    labels: def.shortLabels,
                     datasets: [{
                         label: 'Votos',
                         data: [0, 0, 0, 0],
-                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b', '#a855f7'],
+                        backgroundColor: def.colors,
                         borderWidth: 0,
                         borderRadius: isBar ? 10 : 0
                     }]
@@ -1526,16 +1947,18 @@
         function initStudentChart() {
             const ctx = document.getElementById('studentChartCanvas').getContext('2d');
             const textColor = getComputedTextColor();
+            const dispRound = rounds[studentDisplayedRoundIndex] || rounds[0];
+            const def = modeDefinitions[dispRound.mode || 'semaforo'];
 
             if (studentChartInstance) studentChartInstance.destroy();
 
             studentChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Entendí', 'No entendí', 'Tengo dudas'],
+                    labels: [def.shortLabels[0], def.shortLabels[1], def.shortLabels[2], def.shortLabels[3]],
                     datasets: [{
-                        data: [0, 0, 0],
-                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                        data: [0, 0, 0, 0],
+                        backgroundColor: def.colors,
                         borderWidth: 0
                     }]
                 },
@@ -1552,13 +1975,6 @@
                                 padding: 22,
                                 usePointStyle: true
                             }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` ${context.label}`;
-                                }
-                            }
                         }
                     }
                 }
@@ -1566,28 +1982,45 @@
         }
 
         function updateCharts() {
-            let v = 0, r = 0, a = 0, vi = 0;
-            
+            // DOCENTE
+            let tv = 0, ta = 0, tr = 0, tvi = 0;
             for (let i = 0; i < totalDesks; i++) {
                 if (!retiredStudents[i]) {
                     const id = `M${i + 1}`;
                     if (votes[id]) {
                         const code = votes[id].code;
-                        if (code === 1) v++;
-                        if (code === 2) r++;
-                        if (code === 3) a++;
-                        if (code === 4) vi++;
+                        if (code === 1) tv++;
+                        if (code === 3) ta++;
+                        if (code === 2) tr++;
+                        if (code === 4) tvi++;
                     }
                 }
             }
 
             if (teacherChartInstance) {
-                teacherChartInstance.data.datasets[0].data = [v, r, a, vi];
+                teacherChartInstance.data.datasets[0].data = [tv, ta, tr, tvi];
                 teacherChartInstance.update();
             }
 
+            // ESTUDIANTES
+            const dispRound = rounds[studentDisplayedRoundIndex] || rounds[0];
+            let sv = 0, sa = 0, sr = 0, svi = 0;
+
+            for (let i = 0; i < totalDesks; i++) {
+                if (!retiredStudents[i]) {
+                    const id = `M${i + 1}`;
+                    if (dispRound.votes && dispRound.votes[id]) {
+                        const code = dispRound.votes[id].code;
+                        if (code === 1) sv++;
+                        if (code === 3) sa++;
+                        if (code === 2) sr++;
+                        if (code === 4) svi++;
+                    }
+                }
+            }
+
             if (studentChartInstance) {
-                studentChartInstance.data.datasets[0].data = [v, r, a];
+                studentChartInstance.data.datasets[0].data = [sv, sa, sr, svi];
                 studentChartInstance.update();
             }
         }
@@ -1617,12 +2050,15 @@
                     const randomCode = Math.floor(Math.random() * 4) + 1;
                     const id = `M${i + 1}`;
                     const time = new Date().toLocaleTimeString();
-                    votes[id] = { code: randomCode, studentName: studentList[i], time };
+                    const vObj = { code: randomCode, studentName: studentList[i], time };
+                    
+                    votes[id] = vObj;
+                    rounds[activeRoundIndex].votes[id] = vObj;
                 }
             }
             localStorage.setItem('mlh_votes_v13', JSON.stringify(votes));
             renderClassroom();
-            showToast("Simulación de votación generada.", "info");
+            showToast("Simulación de votación generada en esta ventana.", "info");
         });
 
         document.getElementById('btn-reset').addEventListener('click', () => {
@@ -1632,7 +2068,9 @@
                 () => {
                     votes = {};
                     rounds[activeRoundIndex].votes = {};
+                    rounds[activeRoundIndex].isRevealed = false;
                     localStorage.removeItem('mlh_votes_v13');
+                    updateRevealButtonUI();
                     renderClassroom();
                     showToast("Respuestas reiniciadas correctamente.", "warning");
                 }
@@ -1711,29 +2149,40 @@
                 cuerpoTexto += `====================================================\n\n`;
 
                 groupedByTopic[topicName].forEach((round) => {
-                    const activeKeys = Object.keys(round.votes).filter(id => {
+                    const modeDef = modeDefinitions[round.mode || 'semaforo'];
+                    const activeKeys = Object.keys(round.votes || {}).filter(id => {
                         const deskIndex = parseInt(id.replace("M", "")) - 1;
                         return deskIndex < totalDesks && !retiredStudents[deskIndex];
                     });
 
-                    let v = 0, r = 0, a = 0, vi = 0;
+                    let v = 0, a = 0, r = 0, vi = 0;
                     activeKeys.forEach(id => {
                         const code = round.votes[id].code;
                         if (code === 1) v++;
-                        if (code === 2) r++;
                         if (code === 3) a++;
+                        if (code === 2) r++;
                         if (code === 4) vi++;
                     });
 
                     const total = activeKeys.length || 1;
                     const makeBar = (count) => '🟩'.repeat(Math.round((count / total) * 12)).padEnd(12, '░');
 
-                    cuerpoTexto += `📊 ${round.title}\n`;
+                    cuerpoTexto += `📊 ${round.title} [Modalidad: ${modeDef.title}]\n`;
+                    if (round.mode === 'quiz' && round.question) cuerpoTexto += `❓ Pregunta: "${round.question}"\n`;
+                    
+                    if (round.mode === 'quiz' && round.options) {
+                        cuerpoTexto += `🔹 Opciones: A: ${round.options.a || 'A'} | B: ${round.options.b || 'B'} | C: ${round.options.c || 'C'} | D: ${round.options.d || 'D'}\n`;
+                    }
+
+                    if (round.mode === 'quiz' && round.correctAnswer !== 'none') {
+                        const quizMap = { "1": "A", "3": "B", "2": "C", "4": "D" };
+                        cuerpoTexto += `🏆 Respuesta Correcta: Opción ${quizMap[round.correctAnswer]}\n`;
+                    }
                     cuerpoTexto += `----------------------------------------------------\n`;
-                    cuerpoTexto += `🟢 Entendí:          [${makeBar(v)}] ${v}\n`;
-                    cuerpoTexto += `🔴 No entendí:       [${makeBar(r)}] ${r}\n`;
-                    cuerpoTexto += `🟡 Tengo dudas:      [${makeBar(a)}] ${a}\n`;
-                    cuerpoTexto += `🟣 Consulta privada:  [${makeBar(vi)}] ${vi}\n`;
+                    cuerpoTexto += `${modeDef.labels[0]}:  [${makeBar(v)}] ${v}\n`;
+                    cuerpoTexto += `${modeDef.labels[1]}:  [${makeBar(a)}] ${a}\n`;
+                    cuerpoTexto += `${modeDef.labels[2]}:  [${makeBar(r)}] ${r}\n`;
+                    cuerpoTexto += `${modeDef.labels[3]}:  [${makeBar(vi)}] ${vi}\n`;
                     cuerpoTexto += `----------------------------------------------------\n`;
                     cuerpoTexto += `DETALLE DE ALUMNOS:\n`;
 
@@ -1742,7 +2191,8 @@
                     } else {
                         activeKeys.forEach((id, i) => {
                             const reg = round.votes[id];
-                            cuerpoTexto += `${i + 1}. [${id}] ${reg.studentName}: ${colorMap[reg.code]} (${reg.time})\n`;
+                            const labelIndex = reg.code === 1 ? 0 : (reg.code === 3 ? 1 : (reg.code === 2 ? 2 : 3));
+                            cuerpoTexto += `${i + 1}. [${id}] ${reg.studentName}: ${modeDef.labels[labelIndex]} (${reg.time})\n`;
                         });
                         cuerpoTexto += `\n`;
                     }
@@ -1777,115 +2227,217 @@
                 });
         });
 
-        let rounds = [
-            { id: 1, title: "Votación 1", topic: "General", votes: {} }
-        ];
-        let activeRoundIndex = 0;
-
+        // GESTIÓN DE PESTAÑAS Y NAVEGACIÓN
         function renderTabs() {
             const container = document.getElementById('tabs-container');
+            const studentSelect = document.getElementById('select-student-displayed-round');
+            
             if (!container) return;
             container.innerHTML = '';
+            studentSelect.innerHTML = '';
 
             rounds.forEach((round, index) => {
-                const btn = document.createElement('button');
+                // ICONOS SEGÚN MODALIDAD
+                let iconClass = 'fa-bookmark';
+                if (round.mode === 'diagnostico') iconClass = 'fa-bullseye';
+                if (round.mode === 'semaforo') iconClass = 'fa-traffic-light';
+                if (round.mode === 'quiz') iconClass = 'fa-list-check';
+
+                const btn = document.createElement('div');
                 btn.className = `tab-button ${index === activeRoundIndex ? 'active-tab' : ''}`;
-                btn.type = 'button';
                 
                 btn.innerHTML = `
-                    <span onclick="switchTab(${index})"><i class="fa-solid fa-bookmark"></i> ${round.title}</span>
-                    <button type="button" class="btn-delete-tab" title="Eliminar votación" onclick="deleteRound(event, ${index})">✕</button>
+                    <span class="tab-title-click"><i class="fa-solid ${iconClass}"></i> ${round.title}</span>
+                    <button type="button" class="btn-delete-tab" title="Eliminar ventana">✕</button>
                 `;
+
+                btn.addEventListener('click', () => {
+                    switchTab(index);
+                });
+
+                const deleteBtn = btn.querySelector('.btn-delete-tab');
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteRound(index);
+                });
+
                 container.appendChild(btn);
+
+                // LLENAR SELECTOR EN VISTA ESTUDIANTE
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = `${round.title} (${modeDefinitions[round.mode || 'semaforo'].title})`;
+                if (index === studentDisplayedRoundIndex) opt.selected = true;
+                studentSelect.appendChild(opt);
             });
 
             const addBtn = document.createElement('button');
             addBtn.className = 'btn-add-tab';
             addBtn.type = 'button';
-            addBtn.title = 'Crear nueva votación';
+            addBtn.title = 'Crear nueva ventana';
             addBtn.innerHTML = `<i class="fa-solid fa-plus"></i>`;
-            addBtn.onclick = createNewRound;
+            addBtn.onclick = openNewTabModal;
             container.appendChild(addBtn);
         }
 
+        const selectStudentDisplayedRound = document.getElementById('select-student-displayed-round');
+        selectStudentDisplayedRound.addEventListener('change', (e) => {
+            studentDisplayedRoundIndex = parseInt(e.target.value);
+            initStudentChart();
+            recalculateTotals();
+            showToast(`Vista de estudiantes actualizada a: "${rounds[studentDisplayedRoundIndex].title}"`, "info");
+        });
+
         function switchTab(index) {
+            if (index < 0 || index >= rounds.length) return;
+
+            // GUARDAR ESTADO DE LA PESTAÑA ACTUAL
             rounds[activeRoundIndex].votes = { ...votes };
             rounds[activeRoundIndex].topic = document.getElementById('input-tema').value.trim() || rounds[activeRoundIndex].topic || "General";
+            rounds[activeRoundIndex].question = inputQuestionText.value.trim();
+            rounds[activeRoundIndex].options = {
+                a: inputOptA.value.trim(),
+                b: inputOptB.value.trim(),
+                c: inputOptC.value.trim(),
+                d: inputOptD.value.trim()
+            };
 
+            // CAMBIAR A LA NUEVA PESTAÑA
             activeRoundIndex = index;
-            votes = { ...rounds[activeRoundIndex].votes };
-            document.getElementById('input-tema').value = rounds[activeRoundIndex].topic !== "General" ? rounds[activeRoundIndex].topic : '';
+            const currentRound = rounds[activeRoundIndex];
             
+            votes = { ...currentRound.votes };
+            localStorage.setItem('mlh_votes_v13', JSON.stringify(votes));
+
+            document.getElementById('input-tema').value = currentRound.topic !== "General" ? currentRound.topic : '';
+            inputQuestionText.value = currentRound.question || '';
+            inputOptA.value = currentRound.options ? (currentRound.options.a || '') : '';
+            inputOptB.value = currentRound.options ? (currentRound.options.b || '') : '';
+            inputOptC.value = currentRound.options ? (currentRound.options.c || '') : '';
+            inputOptD.value = currentRound.options ? (currentRound.options.d || '') : '';
+
+            if (currentRound.mode === 'quiz') {
+                selectCorrectAnswer.style.display = 'inline-block';
+                selectCorrectAnswer.value = currentRound.correctAnswer || 'none';
+                btnToggleReveal.style.display = 'inline-flex';
+                quizInputsWrapper.style.display = 'flex';
+            } else {
+                selectCorrectAnswer.style.display = 'none';
+                btnToggleReveal.style.display = 'none';
+                quizInputsWrapper.style.display = 'none';
+            }
+
+            updateRevealButtonUI();
+            updateModeLabels();
             renderTabs();
+            initTeacherChart();
             renderClassroom();
         }
 
-        function createNewRound() {
+        // MODAL CREACIÓN DE NUEVA PESTAÑA
+        const newTabModal = document.getElementById('new-tab-modal');
+        const selectNewTabMode = document.getElementById('select-new-tab-mode');
+
+        function openNewTabModal() {
+            newTabModal.classList.add('active');
+        }
+
+        document.getElementById('btn-cancel-new-tab').addEventListener('click', () => {
+            newTabModal.classList.remove('active');
+        });
+
+        document.getElementById('btn-confirm-new-tab').addEventListener('click', () => {
+            const selectedMode = selectNewTabMode.value;
+            const modeInfo = modeDefinitions[selectedMode];
+            
+            const countSameMode = rounds.filter(r => r.mode === selectedMode).length;
+            const titleName = countSameMode > 0 ? `${modeInfo.title.split(' ')[0]} ${countSameMode + 1}` : modeInfo.title.split(' ')[0];
+
             const temaInput = document.getElementById('input-tema').value.trim();
             const currentTopic = temaInput !== "" ? temaInput : (rounds[activeRoundIndex].topic || "General");
-            const defaultTitle = `Votación ${rounds.length + 1}`;
 
             rounds[activeRoundIndex].votes = { ...votes };
             rounds[activeRoundIndex].topic = currentTopic;
+            rounds[activeRoundIndex].question = inputQuestionText.value.trim();
+            rounds[activeRoundIndex].options = {
+                a: inputOptA.value.trim(),
+                b: inputOptB.value.trim(),
+                c: inputOptC.value.trim(),
+                d: inputOptD.value.trim()
+            };
 
             rounds.push({
-                id: rounds.length + 1,
-                title: defaultTitle,
+                id: Date.now(),
+                title: titleName,
                 topic: currentTopic,
+                question: "",
+                options: { a: "", b: "", c: "", d: "" },
+                mode: selectedMode,
+                correctAnswer: "none",
+                isRevealed: false,
                 votes: {}
             });
 
-            activeRoundIndex = rounds.length - 1;
-            votes = {};
+            newTabModal.classList.remove('active');
+            switchTab(rounds.length - 1);
+            showToast(`Nueva ventana "${titleName}" creada con éxito.`, "info");
+        });
 
-            renderTabs();
-            renderClassroom();
-            showToast(`Nueva votación "${defaultTitle}" agregada.`, "info");
-        }
-
-        window.deleteRound = function(event, index) {
-            event.stopPropagation();
-
+        function deleteRound(index) {
             if (rounds.length === 1) {
                 showConfirmModal(
                     "¿Reiniciar Votación?",
-                    "Es la única pestaña abierta. ¿Deseas limpiar sus datos?",
+                    "Es la única ventana abierta. ¿Deseas limpiar sus datos?",
                     () => {
                         votes = {};
                         rounds[0].votes = {};
-                        renderClassroom();
-                        showToast("Votación reiniciada.", "info");
+                        rounds[0].question = "";
+                        rounds[0].options = { a: "", b: "", c: "", d: "" };
+                        rounds[0].isRevealed = false;
+                        localStorage.removeItem('mlh_votes_v13');
+                        switchTab(0);
+                        showToast("Ventana reiniciada.", "info");
                     }
                 );
                 return;
             }
 
             showConfirmModal(
-                "¿Eliminar Votación?",
-                `¿Estás seguro de que deseas eliminar la "${rounds[index].title}"?`,
+                "¿Eliminar Ventana?",
+                `¿Estás seguro de que deseas eliminar "${rounds[index].title}"?`,
                 () => {
                     const deletedTitle = rounds[index].title;
                     rounds.splice(index, 1);
                     
-                    if (activeRoundIndex >= rounds.length) {
-                        activeRoundIndex = rounds.length - 1;
-                    } else if (activeRoundIndex === index) {
-                        activeRoundIndex = Math.max(0, index - 1);
+                    let newIndex = activeRoundIndex;
+                    if (index === activeRoundIndex) {
+                        newIndex = Math.max(0, index - 1);
+                    } else if (index < activeRoundIndex) {
+                        newIndex = activeRoundIndex - 1;
                     }
 
-                    votes = { ...rounds[activeRoundIndex].votes };
-                    document.getElementById('input-tema').value = rounds[activeRoundIndex].topic !== "General" ? rounds[activeRoundIndex].topic : '';
+                    if (studentDisplayedRoundIndex >= rounds.length) {
+                        studentDisplayedRoundIndex = Math.max(0, rounds.length - 1);
+                    }
 
-                    renderTabs();
-                    renderClassroom();
-                    showToast(`La "${deletedTitle}" ha sido eliminada.`, "warning");
+                    activeRoundIndex = newIndex;
+                    switchTab(newIndex);
+                    showToast(`La ventana "${deletedTitle}" ha sido eliminada.`, "warning");
                 }
             );
-        };
+        }
 
+        // EXPORTACIÓN EXCEL COMPLETA
         document.getElementById('btn-excel').addEventListener('click', () => {
             rounds[activeRoundIndex].votes = { ...votes };
             rounds[activeRoundIndex].topic = document.getElementById('input-tema').value.trim() || "General";
+            rounds[activeRoundIndex].question = inputQuestionText.value.trim();
+            rounds[activeRoundIndex].options = {
+                a: inputOptA.value.trim(),
+                b: inputOptB.value.trim(),
+                c: inputOptC.value.trim(),
+                d: inputOptD.value.trim()
+            };
 
             const docente = document.getElementById('input-docente').value.trim() || "No especificado";
             const grupo = document.getElementById('select-grupo').value || "No especificado";
@@ -1903,19 +2455,25 @@
             const workbook = XLSX.utils.book_new();
 
             rounds.forEach((round, index) => {
-                const activeKeys = Object.keys(round.votes).filter(id => {
+                const modeDef = modeDefinitions[round.mode || 'semaforo'];
+                const activeKeys = Object.keys(round.votes || {}).filter(id => {
                     const deskIndex = parseInt(id.replace("M", "")) - 1;
                     return deskIndex < totalDesks && !retiredStudents[deskIndex];
                 });
 
-                let v = 0, r = 0, a = 0, vi = 0;
+                let v = 0, a = 0, r = 0, vi = 0;
                 activeKeys.forEach(id => {
                     const code = round.votes[id].code;
                     if (code === 1) v++;
-                    if (code === 2) r++;
                     if (code === 3) a++;
+                    if (code === 2) r++;
                     if (code === 4) vi++;
                 });
+
+                const quizMap = { "1": "Opción A", "3": "Opción B", "2": "Opción C", "4": "Opción D" };
+                const correctStr = (round.mode === 'quiz' && round.correctAnswer !== 'none') ? quizMap[round.correctAnswer] : "N/A";
+
+                const optsStr = round.options ? `A: ${round.options.a || '-'} | B: ${round.options.b || '-'} | C: ${round.options.c || '-'} | D: ${round.options.d || '-'}` : "Predeterminadas";
 
                 const wsData = [
                     ["LICEO N° 42 \"JOSÉ PEDRO CARDOSO\""],
@@ -1923,26 +2481,40 @@
                     [""],
                     ["Docente:", docente, "", "Fecha:", fecha],
                     ["Grupo / Nivel:", grupo, "", "Asignatura:", materia],
-                    ["Tema Tratado:", round.topic || "General"],
+                    ["Tema Tratado:", round.topic || "General", "", "Modalidad:", modeDef.title],
+                    ["Pregunta / Consigna:", round.question || "Sin consigna especificada"],
+                    ["Opciones Definidas:", optsStr, "", "Respuesta Correcta:", correctStr],
                     [""],
                     ["RESUMEN DE VOTOS:"],
-                    ["🟢 Entendí", v, "🔴 No entendí", r],
-                    ["🟡 Tengo dudas", a, "🟣 Consulta privada", vi],
+                    [modeDef.labels[0], v, modeDef.labels[1], a],
+                    [modeDef.labels[2], r, modeDef.labels[3], vi],
                     [""],
-                    ["N°", "Asiento", "Estudiante", "Respuesta / Estado", "Hora Voto"]
+                    ["N°", "Asiento", "Estudiante", "Respuesta Elegida", "Hora Voto", "Evaluación Quiz"]
                 ];
 
                 let count = 1;
                 for (let i = 0; i < totalDesks; i++) {
                     const id = `M${i + 1}`;
-                    if (round.votes[id] && !retiredStudents[i]) {
+                    if (round.votes && round.votes[id] && !retiredStudents[i]) {
                         const reg = round.votes[id];
-                        wsData.push([count++, id, reg.studentName, colorMap[reg.code] || "Desconocido", reg.time]);
+                        
+                        let choiceText = modeDef.labels[reg.code === 1 ? 0 : (reg.code === 3 ? 1 : (reg.code === 2 ? 2 : 3))];
+                        if (round.mode === 'quiz' && round.options) {
+                            const optKey = reg.code === 1 ? 'a' : (reg.code === 3 ? 'b' : (reg.code === 2 ? 'c' : 'd'));
+                            if (round.options[optKey]) choiceText += ` (${round.options[optKey]})`;
+                        }
+
+                        let evalQuiz = "N/A";
+                        if (round.mode === 'quiz' && round.correctAnswer !== 'none') {
+                            evalQuiz = (reg.code.toString() === round.correctAnswer) ? "✅ Correcto" : "❌ Incorrecto";
+                        }
+
+                        wsData.push([count++, id, reg.studentName, choiceText, reg.time, evalQuiz]);
                     }
                 }
 
                 const worksheet = XLSX.utils.aoa_to_sheet(wsData);
-                worksheet['!cols'] = [{ wch: 8 }, { wch: 14 }, { wch: 25 }, { wch: 26 }, { wch: 15 }];
+                worksheet['!cols'] = [{ wch: 8 }, { wch: 14 }, { wch: 25 }, { wch: 32 }, { wch: 15 }, { wch: 18 }];
 
                 const styleHeaderTitle = {
                     font: { name: 'Arial', sz: 14, bold: true, color: { rgb: colors.textHeader } },
@@ -1963,24 +2535,24 @@
                 };
 
                 worksheet['!merges'] = [
-                    { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
-                    { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }
+                    { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } },
+                    { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }
                 ];
 
                 worksheet['A1'].s = styleHeaderTitle;
                 worksheet['A2'].s = styleSubTitle;
 
-                ['A12', 'B12', 'C12', 'D12', 'E12'].forEach(cell => {
+                ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'].forEach(cell => {
                     if (worksheet[cell]) worksheet[cell].s = styleTableHeader;
                 });
 
-                const rowCount = wsData.length - 12;
+                const rowCount = wsData.length - 14;
                 for (let k = 0; k < rowCount; k++) {
-                    const rowIndex = 13 + k;
+                    const rowIndex = 15 + k;
                     const isEven = k % 2 === 0;
                     const rowBgColor = isEven ? 'FFFFFF' : colors.lightBg;
 
-                    ['A', 'B', 'C', 'D', 'E'].forEach(col => {
+                    ['A', 'B', 'C', 'D', 'E', 'F'].forEach(col => {
                         const cellKey = `${col}${rowIndex}`;
                         if (worksheet[cellKey]) {
                             worksheet[cellKey].s = {
@@ -1993,7 +2565,7 @@
                 }
 
                 let sheetName = round.title.replace(/[\\/*?:[\]]/g, "").substring(0, 30);
-                if (!sheetName) sheetName = `Pregunta ${index + 1}`;
+                if (!sheetName) sheetName = `Ventana ${index + 1}`;
 
                 XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
             });
@@ -2003,9 +2575,8 @@
             showToast("Informe de Excel descargado con éxito.", "success");
         });
 
-        renderTabs();
-        initTeacherChart();
-        initStudentChart();
+        // INICIALIZACIÓN INICIAL
+        switchTab(0);
         renderClassroom();
     </script>
 </body>
