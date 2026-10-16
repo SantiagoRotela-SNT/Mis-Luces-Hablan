@@ -244,7 +244,6 @@
             box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
         }
 
-        /* Menú Desplegable con Íconos para los Temas */
         .dropdown-theme-menu {
             position: relative;
             display: inline-block;
@@ -758,7 +757,6 @@
             transform: scale(1.05);
         }
 
-        /* SISTEMA DE NOTIFICACIONES TOAST PERSONALIZADO */
         #toast-container {
             position: fixed;
             top: 24px;
@@ -838,7 +836,6 @@
 </head>
 <body>
 
-    <!-- CONTENEDOR DE TOASTS -->
     <div id="toast-container"></div>
 
     <header>
@@ -855,12 +852,10 @@
                     <i class="fa-solid fa-circle-xmark"></i> Desconectado
                 </span>
 
-                <!-- Botón de Vista Estudiante -->
                 <button id="btn-toggle-mode" class="btn-mode">
                     <i class="fa-solid fa-graduation-cap"></i> Vista Estudiante
                 </button>
 
-                <!-- Menú Desplegable de Temas Visuales con Íconos -->
                 <div class="dropdown-theme-menu" id="theme-dropdown">
                     <button type="button" id="btn-theme-toggle" class="btn-mode" style="background: var(--card-bg-solid); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px 16px;">
                         <span id="current-theme-icon"><i class="fa-solid fa-moon"></i></span>
@@ -965,7 +960,6 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR DE LENGÜETAS DE VOTACIÓN -->
     <div class="class-info-card teacher-only" style="margin-bottom: 16px; padding: 16px 24px;">
         <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;">
             <i class="fa-solid fa-layer-group"></i> Votaciones de la Sesión:
@@ -1032,7 +1026,6 @@
         </div>
     </main>
 
-    <!-- MODAL CONFIRMACIÓN CORREO -->
     <div class="modal-overlay" id="email-modal">
         <div class="modal-card">
             <h3><i class="fa-solid fa-envelope-circle-check" style="color: var(--accent-primary);"></i> Confirmar Envío de Informe</h3>
@@ -1076,7 +1069,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIRMACIÓN ACCIONES GERENCIALES -->
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal-card" style="max-width: 440px;">
             <h3 id="confirm-modal-title"><i class="fa-solid fa-triangle-exclamation" style="color: var(--color-amarillo);"></i> ¿Confirmar Acción?</h3>
@@ -1089,12 +1081,10 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE EMAILJS CON TUS CREDENCIALES
         (function() {
             emailjs.init("SywcfkJ91fIUfMRJT");
         })();
 
-        // FUNCIONES HELPER PARA NOTIFICACIONES TOAST Y MODAL CONFIRM
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1147,7 +1137,6 @@
         }
 
         let retiredStudents = {}; 
-
         const colorMap = { 1: "🟢 Entendí", 2: "🔴 No entendí", 3: "🟡 Tengo dudas", 4: "🟣 Consulta privada" };
         
         let selectStudentsElem = document.getElementById('select-total-students');
@@ -1160,7 +1149,14 @@
         let port, reader;
         let draggedIndex = null;
 
-        // SELECCIÓN DE CANTIDAD DE ESTUDIANTES (INCLUYENDO OPCIÓN PERSONALIZADA)
+        // ESCUCHA DE EVENTOS PARA SINCRONIZACIÓN EN TIEMPO REAL ENTRE MÚLTIPLES VENTANAS/PANTALLAS
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'mlh_votes_v13') {
+                votes = JSON.parse(event.newValue) || {};
+                renderClassroom();
+            }
+        });
+
         selectStudentsElem.addEventListener('change', (e) => {
             if (e.target.value === 'custom') {
                 const customVal = prompt("Ingresa la cantidad exacta de estudiantes (ejemplo: 18, 35, 42):", totalDesks);
@@ -1188,7 +1184,6 @@
             renderClassroom();
         });
 
-        // DESPLEGABLE DE TEMAS CON ÍCONOS
         const themeDropdown = document.getElementById('theme-dropdown');
         const btnThemeToggle = document.getElementById('btn-theme-toggle');
         const themeIconMap = {
@@ -1265,7 +1260,6 @@
             return getComputedStyle(document.body).getPropertyValue('--text-primary').trim() || '#f8fafc';
         }
 
-        // CONEXIÓN USB PUERTO SERIE
         document.getElementById('btn-serial').addEventListener('click', async () => {
             if (!("serial" in navigator)) {
                 showToast("Tu navegador no soporta la API Web Serial. Usa Chrome o Edge.", "error");
@@ -1661,7 +1655,6 @@
             modal.classList.remove('active');
         });
 
-        // ENVÍO DIRECTO AUTOMÁTICO VÍA EMAILJS AGRUPANDO POR TEMA
         document.getElementById('btn-send-emails').addEventListener('click', () => {
             rounds[activeRoundIndex].votes = { ...votes };
             rounds[activeRoundIndex].topic = document.getElementById('input-tema').value.trim() || "General";
@@ -1784,9 +1777,6 @@
                 });
         });
 
-        // -------------------------------------------------------------
-        // LENGÜETAS (PESTAÑAS) CON BOTÓN "X" PARA ELIMINAR Y NOTIFICACIÓN
-        // -------------------------------------------------------------
         let rounds = [
             { id: 1, title: "Votación 1", topic: "General", votes: {} }
         ];
@@ -1893,7 +1883,6 @@
             );
         };
 
-        // EXPORTACIÓN EXCEL MULTI-LENGÜETA
         document.getElementById('btn-excel').addEventListener('click', () => {
             rounds[activeRoundIndex].votes = { ...votes };
             rounds[activeRoundIndex].topic = document.getElementById('input-tema').value.trim() || "General";
