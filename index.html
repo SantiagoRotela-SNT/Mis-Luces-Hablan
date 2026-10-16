@@ -109,6 +109,8 @@
             gap: 24px;
             margin-bottom: 24px;
             animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 20;
         }
 
         .header-top {
@@ -246,6 +248,7 @@
         .dropdown-theme-menu {
             position: relative;
             display: inline-block;
+            z-index: 100;
         }
 
         .dropdown-theme-content {
@@ -255,10 +258,10 @@
             top: 115%;
             background-color: var(--card-bg-solid);
             min-width: 170px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
             border-radius: 16px;
             border: 1px solid var(--border-color);
-            z-index: 50;
+            z-index: 1000;
             padding: 6px;
             animation: fadeIn 0.2s ease;
         }
@@ -434,11 +437,86 @@
             box-shadow: var(--shadow-md);
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+            position: relative;
+            cursor: grab;
+            user-select: none;
         }
 
-        .desk:hover {
-            transform: translateY(-4px) scale(1.03);
-            border-color: var(--accent-primary);
+        .desk:active { cursor: grabbing; }
+
+        .desk.drag-over {
+            border: 2px dashed var(--accent-primary) !important;
+            transform: scale(1.05);
+            background-color: var(--accent-glow);
+        }
+
+        .desk.retired-desk {
+            opacity: 0.45;
+            filter: grayscale(0.8);
+            border-style: dashed;
+        }
+
+        .desk-menu-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: none;
+        }
+
+        .desk-menu-btn:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: none;
+        }
+
+        .desk-menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 32px;
+            right: 8px;
+            background-color: var(--card-bg-solid);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 60;
+            padding: 4px;
+            min-width: 140px;
+        }
+
+        .desk-menu-dropdown.active {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .desk-menu-item {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+            box-shadow: none;
+        }
+
+        .desk-menu-item:hover {
+            background-color: var(--accent-glow);
+            color: var(--accent-primary);
+            transform: none;
         }
 
         .desk-student {
@@ -448,6 +526,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             color: var(--text-primary);
+            padding-right: 14px;
         }
 
         .desk-id {
@@ -607,21 +686,23 @@
             background-color: var(--card-bg-solid);
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
-            padding: 10px 20px;
+            padding: 8px 14px 8px 18px;
             border-radius: 16px;
             font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             white-space: nowrap;
             transition: all 0.25s ease;
+            box-shadow: none;
         }
 
         .tab-button:hover {
             border-color: var(--accent-primary);
             color: var(--text-primary);
+            transform: none;
         }
 
         .tab-button.active-tab {
@@ -629,6 +710,29 @@
             color: #ffffff !important;
             border-color: var(--accent-primary) !important;
             box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .btn-delete-tab {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            padding: 2px 6px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-delete-tab:hover {
+            opacity: 1;
+            background-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            transform: scale(1.15);
         }
 
         .btn-add-tab {
@@ -654,6 +758,58 @@
             transform: scale(1.05);
         }
 
+        /* SISTEMA DE NOTIFICACIONES TOAST PERSONALIZADO */
+        #toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast-message {
+            background: var(--card-bg-solid);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 14px 20px;
+            border-radius: 16px;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            pointer-events: auto;
+            animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            max-width: 380px;
+        }
+
+        .toast-message.toast-success { border-color: var(--color-verde); box-shadow: 0 0 15px rgba(16, 185, 129, 0.25); }
+        .toast-message.toast-success i { color: var(--color-verde); font-size: 1.2rem; }
+
+        .toast-message.toast-error { border-color: var(--color-rojo); box-shadow: 0 0 15px rgba(239, 68, 68, 0.25); }
+        .toast-message.toast-error i { color: var(--color-rojo); font-size: 1.2rem; }
+
+        .toast-message.toast-warning { border-color: var(--color-amarillo); box-shadow: 0 0 15px rgba(245, 158, 11, 0.25); }
+        .toast-message.toast-warning i { color: var(--color-amarillo); font-size: 1.2rem; }
+
+        .toast-message.toast-info { border-color: var(--accent-primary); box-shadow: 0 0 15px var(--accent-glow); }
+        .toast-message.toast-info i { color: var(--accent-primary); font-size: 1.2rem; }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeOutRight {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(50px); }
+        }
+
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-25px); }
             to { opacity: 1; transform: translateY(0); }
@@ -676,10 +832,14 @@
         }
 
         body.student-mode .teacher-only { display: none !important; }
+        body.student-mode .summary-bar { display: none !important; }
         body.student-mode .student-view-container { display: block !important; }
     </style>
 </head>
 <body>
+
+    <!-- CONTENEDOR DE TOASTS -->
+    <div id="toast-container"></div>
 
     <header>
         <div class="header-top">
@@ -831,7 +991,7 @@
             <div id="count-violeta" class="stat-value">0</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label"><i class="fa-solid fa-chart-pie"></i> Votos / Total</div>
+            <div class="stat-label"><i class="fa-solid fa-chart-pie"></i> Votos / Activos</div>
             <div id="count-total" class="stat-value">0 / 30</div>
         </div>
     </div>
@@ -860,8 +1020,11 @@
         </div>
 
         <div class="student-view-container chart-box" id="student-view">
-            <div class="chart-header" style="justify-content: center;">
+            <div class="chart-header" style="justify-content: center; flex-direction: column; gap: 8px;">
                 <h3><i class="fa-solid fa-users-viewfinder"></i> Resultados Colectivos de la Clase</h3>
+                <span id="student-active-count" style="font-size: 1.1rem; color: var(--accent-primary); font-weight: 700;">
+                    <i class="fa-solid fa-check-to-slot"></i> Votos registrados: 0 / 30
+                </span>
             </div>
             <div class="chart-wrapper">
                 <canvas id="studentChartCanvas"></canvas>
@@ -869,6 +1032,7 @@
         </div>
     </main>
 
+    <!-- MODAL CONFIRMACIÓN CORREO -->
     <div class="modal-overlay" id="email-modal">
         <div class="modal-card">
             <h3><i class="fa-solid fa-envelope-circle-check" style="color: var(--accent-primary);"></i> Confirmar Envío de Informe</h3>
@@ -912,11 +1076,62 @@
         </div>
     </div>
 
+    <!-- MODAL CONFIRMACIÓN ACCIONES GERENCIALES -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-card" style="max-width: 440px;">
+            <h3 id="confirm-modal-title"><i class="fa-solid fa-triangle-exclamation" style="color: var(--color-amarillo);"></i> ¿Confirmar Acción?</h3>
+            <p id="confirm-modal-text">¿Estás seguro de que deseas realizar esta acción?</p>
+            <div class="modal-actions">
+                <button type="button" id="btn-confirm-cancel" style="background-color: transparent; color: var(--text-primary); border: 1px solid var(--border-color);">Cancelar</button>
+                <button type="button" id="btn-confirm-accept" class="btn-reset">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // CONFIGURACIÓN DE EMAILJS CON TUS CREDENCIALES
         (function() {
             emailjs.init("SywcfkJ91fIUfMRJT");
         })();
+
+        // FUNCIONES HELPER PARA NOTIFICACIONES TOAST Y MODAL CONFIRM
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast-message toast-${type}`;
+
+            let icon = 'fa-circle-info';
+            if (type === 'success') icon = 'fa-circle-check';
+            if (type === 'error') icon = 'fa-circle-xmark';
+            if (type === 'warning') icon = 'fa-triangle-exclamation';
+
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeOutRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                setTimeout(() => toast.remove(), 350);
+            }, 3500);
+        }
+
+        let confirmCallback = null;
+        function showConfirmModal(title, text, onConfirm) {
+            document.getElementById('confirm-modal-title').innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: var(--color-amarillo);"></i> ${title}`;
+            document.getElementById('confirm-modal-text').textContent = text;
+            confirmCallback = onConfirm;
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
+            document.getElementById('confirm-modal').classList.remove('active');
+            confirmCallback = null;
+        });
+
+        document.getElementById('btn-confirm-accept').addEventListener('click', () => {
+            document.getElementById('confirm-modal').classList.remove('active');
+            if (confirmCallback) confirmCallback();
+            confirmCallback = null;
+        });
 
         const curriculumSubjects = {
             "7mo": ["Biología", "Comunicación Visual", "Educación Física y Recreación", "Educación Musical", "Geografía", "Historia", "Idioma Español", "Inglés", "Matemática", "Ciencias de la Computación", "Ciencias Físico-Químicas"],
@@ -926,10 +1141,12 @@
         };
 
         const baseNames = ["Lucas M.", "Sofía R.", "Mateo G.", "Valentina L.", "Joaquín C.", "Camila B.", "Agustín P.", "Isabella D.", "Nicolás F.", "Martina S.", "Thiago A.", "Lucía V.", "Benjamin H.", "Emma T.", "Felipe O.", "Juliet N.", "Gabriel K.", "Mía E.", "Emanuel I.", "Victoria Q.", "Santiago W.", "Elena J.", "Bruno Y.", "Clara U.", "Ignacio X.", "Zoe L.", "Dante M.", "Renata P.", "Lautaro S.", "Paulina R."];
-        const studentList = [...baseNames];
+        let studentList = [...baseNames];
         for (let i = 31; i <= 100; i++) {
             studentList.push(`Estudiante ${i}`);
         }
+
+        let retiredStudents = {}; 
 
         const colorMap = { 1: "🟢 Entendí", 2: "🔴 No entendí", 3: "🟡 Tengo dudas", 4: "🟣 Consulta privada" };
         
@@ -941,6 +1158,7 @@
         let teacherChartInstance = null;
         let studentChartInstance = null;
         let port, reader;
+        let draggedIndex = null;
 
         // SELECCIÓN DE CANTIDAD DE ESTUDIANTES (INCLUYENDO OPCIÓN PERSONALIZADA)
         selectStudentsElem.addEventListener('change', (e) => {
@@ -959,11 +1177,13 @@
                     opt.value = parsedVal;
                     opt.textContent = `${parsedVal} (Personalizado)`;
                     selectStudentsElem.value = parsedVal;
+                    showToast(`Cantidad ajustada a ${parsedVal} estudiantes.`, 'info');
                 } else {
                     selectStudentsElem.value = totalDesks;
                 }
             } else {
                 totalDesks = parseInt(e.target.value);
+                showToast(`Cantidad ajustada a ${totalDesks} estudiantes.`, 'info');
             }
             renderClassroom();
         });
@@ -985,13 +1205,24 @@
 
         document.addEventListener('click', () => {
             themeDropdown.classList.remove('active');
+            closeAllDeskMenus();
         });
+
+        function closeAllDeskMenus() {
+            document.querySelectorAll('.desk-menu-dropdown').forEach(m => m.classList.remove('active'));
+        }
 
         document.querySelectorAll('.dropdown-theme-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 const theme = e.currentTarget.getAttribute('data-theme');
                 currentThemeValue = theme;
+                
+                const isStudentMode = document.body.classList.contains('student-mode');
                 document.body.className = theme === 'default' ? '' : `theme-${theme}`;
+                if (isStudentMode) {
+                    document.body.classList.add('student-mode');
+                }
+
                 document.getElementById('current-theme-icon').innerHTML = themeIconMap[theme];
                 themeDropdown.classList.remove('active');
 
@@ -1037,7 +1268,7 @@
         // CONEXIÓN USB PUERTO SERIE
         document.getElementById('btn-serial').addEventListener('click', async () => {
             if (!("serial" in navigator)) {
-                alert("Tu navegador no soporta la API Web Serial. Usa Google Chrome o Microsoft Edge.");
+                showToast("Tu navegador no soporta la API Web Serial. Usa Chrome o Edge.", "error");
                 return;
             }
             try {
@@ -1048,9 +1279,11 @@
                 statusBadge.innerHTML = '<i class="fa-solid fa-wifi"></i> Conectado';
                 statusBadge.classList.add("connected");
 
+                showToast("Receptor USB Conectado exitosamente.", "success");
                 readSerialData();
             } catch (err) {
                 console.error("Error al conectar:", err);
+                showToast("No se pudo establecer la conexión USB.", "error");
             }
         });
 
@@ -1090,6 +1323,8 @@
             const deskNum = parseInt(id.replace("M", ""));
             if (deskNum > totalDesks) return; 
 
+            if (retiredStudents[deskNum - 1]) return;
+
             const studentName = studentList[deskNum - 1] || "Estudiante";
             const time = new Date().toLocaleTimeString();
 
@@ -1121,45 +1356,123 @@
             const classroomMap = document.getElementById('classroom-map');
             classroomMap.innerHTML = '';
 
-            for (let i = 1; i <= totalDesks; i++) {
-                const id = `M${i}`;
-                const studentName = studentList[i - 1];
-                const hasVoted = votes[id];
+            for (let i = 0; i < totalDesks; i++) {
+                const deskNum = i + 1;
+                const id = `M${deskNum}`;
+                const studentName = studentList[i];
+                const isRetired = retiredStudents[i] || false;
+                const hasVoted = (!isRetired && votes[id]) ? votes[id] : null;
 
                 const desk = document.createElement('div');
-                desk.className = 'desk';
-                desk.style.animationDelay = `${i * 0.03}s`;
+                desk.className = `desk ${isRetired ? 'retired-desk' : ''}`;
+                desk.setAttribute('draggable', 'true');
+                desk.setAttribute('data-index', i);
+                desk.style.animationDelay = `${deskNum * 0.03}s`;
+
                 desk.innerHTML = `
-                    <div class="desk-student">${studentName}</div>
-                    <div class="desk-id">Asiento ${i < 10 ? '0' + i : i} (${id})</div>
+                    <button type="button" class="desk-menu-btn" data-btn-index="${i}">⋮</button>
+                    <div class="desk-menu-dropdown" id="desk-menu-${i}">
+                        <button type="button" class="desk-menu-item" onclick="toggleRetireStudent(${i})">
+                            <i class="fa-solid ${isRetired ? 'fa-user-plus' : 'fa-user-minus'}"></i>
+                            ${isRetired ? 'Reintegrar a Clase' : 'Marcar como Retirado'}
+                        </button>
+                    </div>
+
+                    <div class="desk-student">${studentName} ${isRetired ? '🏃' : ''}</div>
+                    <div class="desk-id">Asiento ${deskNum < 10 ? '0' + deskNum : deskNum} (${id})</div>
                     <div class="desk-light ${hasVoted ? 'color-' + hasVoted.code + ' active-light' : ''}"></div>
                 `;
+
+                desk.addEventListener('dragstart', (e) => {
+                    draggedIndex = i;
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                desk.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    desk.classList.add('drag-over');
+                });
+
+                desk.addEventListener('dragleave', () => {
+                    desk.classList.remove('drag-over');
+                });
+
+                desk.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    desk.classList.remove('drag-over');
+                    const targetIndex = i;
+
+                    if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                        const tempName = studentList[draggedIndex];
+                        studentList[draggedIndex] = studentList[targetIndex];
+                        studentList[targetIndex] = tempName;
+
+                        const tempRetired = retiredStudents[draggedIndex];
+                        retiredStudents[draggedIndex] = retiredStudents[targetIndex];
+                        retiredStudents[targetIndex] = tempRetired;
+
+                        renderClassroom();
+                    }
+                });
+
                 classroomMap.appendChild(desk);
             }
+
+            document.querySelectorAll('.desk-menu-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = e.target.getAttribute('data-btn-index');
+                    closeAllDeskMenus();
+                    document.getElementById(`desk-menu-${idx}`).classList.toggle('active');
+                });
+            });
+
             recalculateTotals();
         }
+
+        window.toggleRetireStudent = function(index) {
+            retiredStudents[index] = !retiredStudents[index];
+            const deskNum = index + 1;
+            const id = `M${deskNum}`;
+            
+            if (retiredStudents[index]) {
+                if (votes[id]) delete votes[id];
+                showToast(`${studentList[index]} marcado como retirado.`, 'warning');
+            } else {
+                showToast(`${studentList[index]} reintegrado a la clase.`, 'info');
+            }
+
+            closeAllDeskMenus();
+            renderClassroom();
+        };
 
         function recalculateTotals() {
             let v = 0, r = 0, a = 0, vi = 0;
             let activeVotesCount = 0;
+            let activePresentStudents = 0;
 
-            Object.keys(votes).forEach(id => {
-                const deskNum = parseInt(id.replace("M", ""));
-                if (deskNum <= totalDesks) {
-                    activeVotesCount++;
-                    const code = votes[id].code;
-                    if (code === 1) v++;
-                    if (code === 2) r++;
-                    if (code === 3) a++;
-                    if (code === 4) vi++;
+            for (let i = 0; i < totalDesks; i++) {
+                if (!retiredStudents[i]) {
+                    activePresentStudents++;
+                    const id = `M${i + 1}`;
+                    if (votes[id]) {
+                        activeVotesCount++;
+                        const code = votes[id].code;
+                        if (code === 1) v++;
+                        if (code === 2) r++;
+                        if (code === 3) a++;
+                        if (code === 4) vi++;
+                    }
                 }
-            });
+            }
 
             document.getElementById('count-verde').textContent = v;
             document.getElementById('count-rojo').textContent = r;
             document.getElementById('count-amarillo').textContent = a;
             document.getElementById('count-violeta').textContent = vi;
-            document.getElementById('count-total').textContent = `${activeVotesCount} / ${totalDesks}`;
+            document.getElementById('count-total').textContent = `${activeVotesCount} / ${activePresentStudents}`;
+
+            document.getElementById('student-active-count').innerHTML = `<i class="fa-solid fa-check-to-slot"></i> Votos registrados: ${activeVotesCount} / ${activePresentStudents}`;
 
             updateCharts();
         }
@@ -1245,6 +1558,13 @@
                                 padding: 22,
                                 usePointStyle: true
                             }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}`;
+                                }
+                            }
                         }
                     }
                 }
@@ -1253,16 +1573,19 @@
 
         function updateCharts() {
             let v = 0, r = 0, a = 0, vi = 0;
-            Object.keys(votes).forEach(id => {
-                const deskNum = parseInt(id.replace("M", ""));
-                if (deskNum <= totalDesks) {
-                    const code = votes[id].code;
-                    if (code === 1) v++;
-                    if (code === 2) r++;
-                    if (code === 3) a++;
-                    if (code === 4) vi++;
+            
+            for (let i = 0; i < totalDesks; i++) {
+                if (!retiredStudents[i]) {
+                    const id = `M${i + 1}`;
+                    if (votes[id]) {
+                        const code = votes[id].code;
+                        if (code === 1) v++;
+                        if (code === 2) r++;
+                        if (code === 3) a++;
+                        if (code === 4) vi++;
+                    }
                 }
-            });
+            }
 
             if (teacherChartInstance) {
                 teacherChartInstance.data.datasets[0].data = [v, r, a, vi];
@@ -1295,23 +1618,31 @@
         });
 
         document.getElementById('btn-sim-group').addEventListener('click', () => {
-            for (let i = 1; i <= totalDesks; i++) {
-                const randomCode = Math.floor(Math.random() * 4) + 1;
-                const id = `M${i}`;
-                const time = new Date().toLocaleTimeString();
-                votes[id] = { code: randomCode, studentName: studentList[i - 1], time };
+            for (let i = 0; i < totalDesks; i++) {
+                if (!retiredStudents[i]) {
+                    const randomCode = Math.floor(Math.random() * 4) + 1;
+                    const id = `M${i + 1}`;
+                    const time = new Date().toLocaleTimeString();
+                    votes[id] = { code: randomCode, studentName: studentList[i], time };
+                }
             }
             localStorage.setItem('mlh_votes_v13', JSON.stringify(votes));
             renderClassroom();
+            showToast("Simulación de votación generada.", "info");
         });
 
         document.getElementById('btn-reset').addEventListener('click', () => {
-            if (confirm('¿Desea borrar la votación activa de la pestaña actual?')) {
-                votes = {};
-                rounds[activeRoundIndex].votes = {};
-                localStorage.removeItem('mlh_votes_v13');
-                renderClassroom();
-            }
+            showConfirmModal(
+                "¿Reiniciar Votación Activa?",
+                "Esta acción borrará todas las respuestas registradas en la pestaña actual.",
+                () => {
+                    votes = {};
+                    rounds[activeRoundIndex].votes = {};
+                    localStorage.removeItem('mlh_votes_v13');
+                    renderClassroom();
+                    showToast("Respuestas reiniciadas correctamente.", "warning");
+                }
+            );
         });
 
         const modal = document.getElementById('email-modal');
@@ -1332,7 +1663,6 @@
 
         // ENVÍO DIRECTO AUTOMÁTICO VÍA EMAILJS AGRUPANDO POR TEMA
         document.getElementById('btn-send-emails').addEventListener('click', () => {
-            // Guardar votos de la pestaña activa actual
             rounds[activeRoundIndex].votes = { ...votes };
             rounds[activeRoundIndex].topic = document.getElementById('input-tema').value.trim() || "General";
 
@@ -1354,7 +1684,7 @@
             if (customMail) targetMails.push(customMail);
 
             if (targetMails.length === 0) {
-                alert("Por favor, selecciona o ingresa al menos un correo válido.");
+                showToast("Selecciona o ingresa al menos un correo válido.", "warning");
                 return;
             }
 
@@ -1375,7 +1705,6 @@
             cuerpoTexto += `• Grupo/Nivel: ${grupo}\n`;
             cuerpoTexto += `• Asignatura:  ${materia}\n\n`;
 
-            // Agrupar votaciones por Tema Tratado
             const groupedByTopic = {};
             rounds.forEach(round => {
                 const t = round.topic || "General";
@@ -1388,8 +1717,12 @@
                 cuerpoTexto += `📘 TEMA ${idx + 1}: ${topicName.toUpperCase()}\n`;
                 cuerpoTexto += `====================================================\n\n`;
 
-                groupedByTopic[topicName].forEach((round, subIdx) => {
-                    const activeKeys = Object.keys(round.votes).filter(id => parseInt(id.replace("M", "")) <= totalDesks);
+                groupedByTopic[topicName].forEach((round) => {
+                    const activeKeys = Object.keys(round.votes).filter(id => {
+                        const deskIndex = parseInt(id.replace("M", "")) - 1;
+                        return deskIndex < totalDesks && !retiredStudents[deskIndex];
+                    });
+
                     let v = 0, r = 0, a = 0, vi = 0;
                     activeKeys.forEach(id => {
                         const code = round.votes[id].code;
@@ -1439,11 +1772,11 @@
 
             emailjs.send("service_goy7qej", "template_8wqgxeb", templateParams)
                 .then(function(response) {
-                    alert("📧 ¡Informe enviado con éxito a todos los destinatarios desde el correo oficial!");
+                    showToast("Informe enviado con éxito desde el correo oficial.", "success");
                     modal.classList.remove('active');
                 }, function(error) {
                     console.error("Error al enviar correo:", error);
-                    alert("Ocurrió un error al enviar el correo. Revisa la consola para más detalles.");
+                    showToast("Ocurrió un error al enviar el informe.", "error");
                 })
                 .finally(function() {
                     btnSend.disabled = false;
@@ -1452,7 +1785,7 @@
         });
 
         // -------------------------------------------------------------
-        // SISTEMA DE LENGÜETAS (PESTAÑAS) Y BOTÓN DE NUEVA VOTACIÓN "+"
+        // LENGÜETAS (PESTAÑAS) CON BOTÓN "X" PARA ELIMINAR Y NOTIFICACIÓN
         // -------------------------------------------------------------
         let rounds = [
             { id: 1, title: "Votación 1", topic: "General", votes: {} }
@@ -1468,8 +1801,11 @@
                 const btn = document.createElement('button');
                 btn.className = `tab-button ${index === activeRoundIndex ? 'active-tab' : ''}`;
                 btn.type = 'button';
-                btn.innerHTML = `<i class="fa-solid fa-bookmark"></i> ${round.title}`;
-                btn.onclick = () => switchTab(index);
+                
+                btn.innerHTML = `
+                    <span onclick="switchTab(${index})"><i class="fa-solid fa-bookmark"></i> ${round.title}</span>
+                    <button type="button" class="btn-delete-tab" title="Eliminar votación" onclick="deleteRound(event, ${index})">✕</button>
+                `;
                 container.appendChild(btn);
             });
 
@@ -1514,7 +1850,48 @@
 
             renderTabs();
             renderClassroom();
+            showToast(`Nueva votación "${defaultTitle}" agregada.`, "info");
         }
+
+        window.deleteRound = function(event, index) {
+            event.stopPropagation();
+
+            if (rounds.length === 1) {
+                showConfirmModal(
+                    "¿Reiniciar Votación?",
+                    "Es la única pestaña abierta. ¿Deseas limpiar sus datos?",
+                    () => {
+                        votes = {};
+                        rounds[0].votes = {};
+                        renderClassroom();
+                        showToast("Votación reiniciada.", "info");
+                    }
+                );
+                return;
+            }
+
+            showConfirmModal(
+                "¿Eliminar Votación?",
+                `¿Estás seguro de que deseas eliminar la "${rounds[index].title}"?`,
+                () => {
+                    const deletedTitle = rounds[index].title;
+                    rounds.splice(index, 1);
+                    
+                    if (activeRoundIndex >= rounds.length) {
+                        activeRoundIndex = rounds.length - 1;
+                    } else if (activeRoundIndex === index) {
+                        activeRoundIndex = Math.max(0, index - 1);
+                    }
+
+                    votes = { ...rounds[activeRoundIndex].votes };
+                    document.getElementById('input-tema').value = rounds[activeRoundIndex].topic !== "General" ? rounds[activeRoundIndex].topic : '';
+
+                    renderTabs();
+                    renderClassroom();
+                    showToast(`La "${deletedTitle}" ha sido eliminada.`, "warning");
+                }
+            );
+        };
 
         // EXPORTACIÓN EXCEL MULTI-LENGÜETA
         document.getElementById('btn-excel').addEventListener('click', () => {
@@ -1537,7 +1914,10 @@
             const workbook = XLSX.utils.book_new();
 
             rounds.forEach((round, index) => {
-                const activeKeys = Object.keys(round.votes).filter(id => parseInt(id.replace("M", "")) <= totalDesks);
+                const activeKeys = Object.keys(round.votes).filter(id => {
+                    const deskIndex = parseInt(id.replace("M", "")) - 1;
+                    return deskIndex < totalDesks && !retiredStudents[deskIndex];
+                });
 
                 let v = 0, r = 0, a = 0, vi = 0;
                 activeKeys.forEach(id => {
@@ -1564,9 +1944,9 @@
                 ];
 
                 let count = 1;
-                for (let i = 1; i <= totalDesks; i++) {
-                    const id = `M${i}`;
-                    if (round.votes[id]) {
+                for (let i = 0; i < totalDesks; i++) {
+                    const id = `M${i + 1}`;
+                    if (round.votes[id] && !retiredStudents[i]) {
                         const reg = round.votes[id];
                         wsData.push([count++, id, reg.studentName, colorMap[reg.code] || "Desconocido", reg.time]);
                     }
@@ -1631,6 +2011,7 @@
 
             const fileNameGroup = grupo !== "No especificado" ? grupo.replace(/\s+/g, '_') : 'General';
             XLSX.writeFile(workbook, `Informe_Completo_${fileNameGroup}_${fecha.replace(/\//g, '-')}.xlsx`);
+            showToast("Informe de Excel descargado con éxito.", "success");
         });
 
         renderTabs();
